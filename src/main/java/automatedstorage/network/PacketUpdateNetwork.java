@@ -1,0 +1,80 @@
+package automatedstorage.network;
+
+import automatedstorage.block.chest.AutoChestConfigContainer;
+import automatedstorage.block.chest.AutoChestRegistry;
+import automatedstorage.block.chest.AutoChestTileEntity;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+public class PacketUpdateNetwork implements IMessage
+{
+  private BlockPos pos;
+  private int newNetwork;
+
+  public PacketUpdateNetwork()
+  {
+  }
+
+  public PacketUpdateNetwork(BlockPos pos, int newNetwork)
+  {
+    this.pos = pos;
+    this.newNetwork = newNetwork;
+  }
+
+  public PacketUpdateNetwork(AutoChestTileEntity te)
+  {
+    this(te.getPos(), te.getNetworkId());
+  }
+
+  @Override
+  public void toBytes(ByteBuf buf)
+  {
+    buf.writeLong(pos.toLong());
+    buf.writeInt(this.newNetwork);
+  }
+
+  @Override
+  public void fromBytes(ByteBuf buf)
+  {
+    this.pos = BlockPos.fromLong(buf.readLong());
+    this.newNetwork = buf.readInt();
+  }
+
+  public static class Handler implements IMessageHandler<PacketUpdateNetwork, IMessage>
+  {
+
+    @Override
+    public IMessage onMessage(PacketUpdateNetwork message, MessageContext ctx)
+    {
+
+      EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
+
+      AutoChestRegistry autoChestRegistry = AutoChestRegistry
+          .get(ctx.getServerHandler().player.world);
+      
+      if (serverPlayer.openContainer instanceof AutoChestConfigContainer)
+      {
+        try
+        {
+          autoChestRegistry.addAutoChest(message.newNetwork, message.pos);
+          
+          ((AutoChestConfigContainer) serverPlayer.openContainer).updateNetwork(message.newNetwork);
+          serverPlayer.openContainer.detectAndSendChanges();
+        } catch (Exception e)
+        {
+          serverPlayer.sendMessage(new TextComponentString(e.getMessage()));
+        }
+      }
+
+      //serverPlayer.sendMessage(new TextComponentString("Registry : " + message.newNetwork + " -> " + autoChestRegistry.getAutoChests(message.newNetwork).size() + " : " + autoChestRegistry.getAutoChests(message.newNetwork)));
+      
+      // No response packet
+      return null;
+    }
+  }
+}

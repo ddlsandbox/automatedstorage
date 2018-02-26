@@ -1,0 +1,16 @@
+[
+{
+ "modid": "automatedstorage",
+ "name": "Automated Storage",
+ "description": "Connected storage for automated sorting.",
+ "version": "1.1.0",
+ "mcversion": "1.12.2",
+ "url": "",
+ "updateUrl": "",
+ "authorList": ["Diego Darriba"],
+ "credits": "For all lovely people who like modded Minecraft!",
+ "logoFile": "logo.png",
+ "screenshots": [],
+ "dependencies": [mod_minecraftForge]
+}
+]
