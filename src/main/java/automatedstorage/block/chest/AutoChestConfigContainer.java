@@ -58,7 +58,7 @@ public class AutoChestConfigContainer extends ContainerBase
           @Override
           public boolean isItemValid(ItemStack stack)
           {
-            return true;
+            return te.isItemValidForSlot(AutoChestTileEntity.AUTOCHEST_SIZE, stack);
           }
         });
       }

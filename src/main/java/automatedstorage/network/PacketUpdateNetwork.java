@@ -1,5 +1,6 @@
 package automatedstorage.network;
 
+import automatedstorage.block.ModBlocks;
 import automatedstorage.block.chest.AutoChestConfigContainer;
 import automatedstorage.block.chest.AutoChestRegistry;
 import automatedstorage.block.chest.AutoChestTileEntity;
@@ -15,27 +16,30 @@ public class PacketUpdateNetwork implements IMessage
 {
   private BlockPos pos;
   private int newNetwork;
+  private boolean updateRegistry;
 
   public PacketUpdateNetwork()
   {
   }
 
-  public PacketUpdateNetwork(BlockPos pos, int newNetwork)
+  public PacketUpdateNetwork(BlockPos pos, int newNetwork, boolean updateRegistry)
   {
     this.pos = pos;
     this.newNetwork = newNetwork;
+    this.updateRegistry = updateRegistry;
   }
 
   public PacketUpdateNetwork(AutoChestTileEntity te)
   {
-    this(te.getPos(), te.getNetworkId());
+    this(te.getPos(), te.getNetworkId(), te.getBlockType() == ModBlocks.autoChest);
   }
 
   @Override
   public void toBytes(ByteBuf buf)
   {
-    buf.writeLong(pos.toLong());
+    buf.writeLong(this.pos.toLong());
     buf.writeInt(this.newNetwork);
+    buf.writeBoolean(this.updateRegistry);
   }
 
   @Override
@@ -43,6 +47,7 @@ public class PacketUpdateNetwork implements IMessage
   {
     this.pos = BlockPos.fromLong(buf.readLong());
     this.newNetwork = buf.readInt();
+    this.updateRegistry = buf.readBoolean();
   }
 
   public static class Handler implements IMessageHandler<PacketUpdateNetwork, IMessage>
@@ -61,7 +66,10 @@ public class PacketUpdateNetwork implements IMessage
       {
         try
         {
-          autoChestRegistry.addAutoChest(message.newNetwork, message.pos);
+          if (message.updateRegistry)
+          {
+            autoChestRegistry.addAutoChest(message.newNetwork, message.pos);
+          }
           
           ((AutoChestConfigContainer) serverPlayer.openContainer).updateNetwork(message.newNetwork);
           serverPlayer.openContainer.detectAndSendChanges();
@@ -71,8 +79,6 @@ public class PacketUpdateNetwork implements IMessage
         }
       }
 
-      //serverPlayer.sendMessage(new TextComponentString("Registry : " + message.newNetwork + " -> " + autoChestRegistry.getAutoChests(message.newNetwork).size() + " : " + autoChestRegistry.getAutoChests(message.newNetwork)));
-      
       // No response packet
       return null;
     }

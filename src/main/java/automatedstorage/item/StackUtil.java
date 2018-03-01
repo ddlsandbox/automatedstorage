@@ -1,6 +1,9 @@
 package automatedstorage.item;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 
 public final class StackUtil
 {
@@ -87,5 +90,25 @@ public final class StackUtil
   public static boolean areItemsEqual(ItemStack stack1, ItemStack stack2, boolean checkWildcard)
   {
     return isNotNull(stack1) && isNotNull(stack2) && (stack1.isItemEqual(stack2));
+  }
+  
+  /**
+   * Can insert the specified item from the specified slot on the specified side?
+   */
+  public static boolean canInsertItemInSlot(IInventory inventoryIn, ItemStack stack, int index, EnumFacing side)
+  {
+    return !inventoryIn.isItemValidForSlot(index, stack) ? false
+        : !(inventoryIn instanceof ISidedInventory)
+            || ((ISidedInventory) inventoryIn).canInsertItem(index, stack, side);
+  }
+
+  /**
+   * Can combine 2 stacks?
+   */
+  public static boolean canCombine(ItemStack stack1, ItemStack stack2)
+  {
+    return stack1.getItem() != stack2.getItem() ? false
+        : (stack1.getMetadata() != stack2.getMetadata() ? false
+            : (stack1.getCount() > stack1.getMaxStackSize() ? false : ItemStack.areItemStackTagsEqual(stack1, stack2)));
   }
 }

@@ -53,7 +53,8 @@ public class CommonProxy
   @SubscribeEvent
   public static void registerBlocks(RegistryEvent.Register<Block> event)
   {
-    event.getRegistry().register(new AutoChest().setCreativeTab(AutomatedStorage.creativeTab));
+    event.getRegistry().register(new AutoChest("autochest").setCreativeTab(AutomatedStorage.creativeTab));
+    event.getRegistry().register(new AutoChest("autochest_source").setCreativeTab(AutomatedStorage.creativeTab));
     GameRegistry.registerTileEntity(AutoChestTileEntity.class, AutomatedStorage.modId + "_autochest");
   }
 
@@ -61,6 +62,7 @@ public class CommonProxy
   public static void registerItems(RegistryEvent.Register<Item> event)
   {
     event.getRegistry().register(new ItemBlock(ModBlocks.autoChest).setRegistryName(ModBlocks.autoChest.getRegistryName()));
+    event.getRegistry().register(new ItemBlock(ModBlocks.autoChestSource).setRegistryName(ModBlocks.autoChestSource.getRegistryName()));
   }
 
   public void registerItemRenderer(Item item, int meta, String id)

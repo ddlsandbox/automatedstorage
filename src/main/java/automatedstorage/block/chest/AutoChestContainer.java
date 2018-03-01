@@ -50,21 +50,7 @@ public class AutoChestContainer extends ContainerBase
               @Override
               public boolean isItemValid(ItemStack stack)
               {
-                /* allow only if item exists in filter */
-                for (int slotId = 0; slotId < AutoChestTileEntity.AUTOCHEST_FILTER_SIZE; slotId++)
-                {
-                  ItemStack checkStack = te.getStackInSlot(AutoChestTileEntity.AUTOCHEST_SIZE + slotId);
-                  if (StackUtil.isValid(checkStack) && checkStack.getItem() == stack.getItem())
-                    return true;
-                }
-                return false;
-              }
-              
-              @Override
-              public void onSlotChanged()
-              {
-                super.onSlotChanged();
-                te.redistribute();
+                return te.isItemValidForSlot(0, stack);
               }
             });
       }

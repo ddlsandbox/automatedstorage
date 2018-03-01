@@ -1,0 +1,7 @@
+# Mod title
+itemGroup.automatedstorage=Automated Storage
+
+# Entities
+tile.automatedstorage.autochest.name=Automated Chest
+tile.automatedstorage.autochest_source.name=Automated Chest Source
+

@@ -22,9 +22,9 @@ public class AutoChest extends BlockTileEntity<AutoChestTileEntity>
 
   public static final int GUI_ID = 1;
 
-  public AutoChest()
+  public AutoChest(String name)
   {
-    super(Material.ROCK, "autochest");
+    super(Material.ROCK, name);
   }
 
   @SideOnly(Side.CLIENT)
@@ -34,19 +34,12 @@ public class AutoChest extends BlockTileEntity<AutoChestTileEntity>
         new ModelResourceLocation(getRegistryName(), "inventory"));
   }
 
-  private AutoChestTileEntity getTE(World world, BlockPos pos)
-  {
-    return (AutoChestTileEntity) world.getTileEntity(pos);
-  }
-
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand,
       EnumFacing side, float hitX, float hitY, float hitZ)
   {
     if (worldIn.isRemote)
       return true;
-
-    // getTE(worldIn, pos).setNetworkId(getTE(worldIn, pos).getNetworkId() + 1);
 
     if (playerIn.isSneaking())
     {
@@ -65,14 +58,8 @@ public class AutoChest extends BlockTileEntity<AutoChestTileEntity>
     return AutoChestTileEntity.class;
   }
 
-  // @Override
-  // public AutoChestTileEntity createTileEntity(World world, IBlockState state)
-  // {
-  // return new AutoChestTileEntity();
-  // }
-
   @Override
-  public TileEntity createNewTileEntity(World arg0, int arg1)
+  public TileEntity createNewTileEntity(World world, int arg1)
   {
     return new AutoChestTileEntity();
   }

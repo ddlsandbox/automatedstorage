@@ -80,7 +80,6 @@ public class AutoChestRegistry extends WorldSavedData
     int currentKey = -1;
     NBTTagList tagList = tagCompound.getTagList(TAG_LIST_NAME, Constants.NBT.TAG_COMPOUND);
     
-    System.out.println("REGISTRY NBTREAD");
     for (int i = 0; i < tagList.tagCount(); i++)
     {
       NBTTagCompound entryCompound = (NBTTagCompound) tagList.get(i);
@@ -98,16 +97,12 @@ public class AutoChestRegistry extends WorldSavedData
         autoChestRegistry.get(key).add(pos);
         reverseLookup.put(pos, key);
       }
-      
-      System.out.println("REGISTRY NBTREAD : " + key + " " + pos + " total: " + autoChestRegistry.get(key).size());
     }
-    System.out.println("REGISTRY NBTREAD DONE");
   }
 
   @Override
   public NBTTagCompound writeToNBT(NBTTagCompound tagCompound)
   {
-    System.out.println("REGISTRY NBTWRITE");
     NBTTagList tagList = new NBTTagList();
     for (Integer key : autoChestRegistry.keySet())
     {
@@ -118,12 +113,8 @@ public class AutoChestRegistry extends WorldSavedData
         entryCompound.setInteger("NetworkId", key);
         entryCompound.setLong("Position", pos.toLong());
         tagList.appendTag(entryCompound);
-        
-        System.out.println("REGISTRY NBTWRITE " + key + " " + pos);
       }
     }
-    
-    System.out.println("REGISTRY NBTWRITE DONE");
     tagCompound.setTag(TAG_LIST_NAME, tagList);
     return tagCompound;
   }
