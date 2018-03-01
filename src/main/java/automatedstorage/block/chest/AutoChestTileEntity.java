@@ -85,6 +85,13 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
     super.readSyncableNBT(compound, type);
   }
 
+  /**
+   * Finds the first chest in the network where the stack exists in the filter
+   * 
+   * Note that if several chests in the network contains the same filter, only
+   * the first one will be used, and this implies that even if the first one is
+   * full, the second one is never selected.
+   */
   private IInventory getInventoryForTransfer(ItemStack stack)
   {
     AutoChestRegistry autoChestRegistry = AutoChestRegistry.get(this.getWorld());
@@ -253,7 +260,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   {
     int i = inventoryIn.getSizeInventory();
 
-    for (int j = 0; j < i && stack != null && stack.getCount() > 0; ++j)
+    for (int j = 0; j < i && StackUtil.isValid(stack) && stack.getCount() > 0; ++j)
     {
       stack = insertStack(inventoryIn, stack, j, null);
     }
