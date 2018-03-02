@@ -4,6 +4,7 @@ itemGroup.automatedstorage=Automated Storage
 # Entities
 tile.automatedstorage.autochest.name=Cofre Automático
 tile.automatedstorage.autochest_source.name=Cofre Automático (Fuente)
+tile.automatedstorage.autochest_sink.name=Cofre Automático (Sumidero)
 
 # Items
 item.configurator.name=Configurador

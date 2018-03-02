@@ -134,7 +134,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   @Override
   public boolean isItemValidForSlot(int index, ItemStack stack)
   {
-    if (getBlockType() == ModBlocks.autoChestSource)
+    if (getBlockType() == ModBlocks.autoChestSource || getBlockType() == ModBlocks.autoChestSink)
       return (index < AUTOCHEST_SIZE);
     
     boolean itemInFilter = isItemInFilter(stack); 

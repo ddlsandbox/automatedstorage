@@ -18,6 +18,9 @@ public class ModBlocks
   @GameRegistry.ObjectHolder("automatedstorage:autochest_source")
   public static AutoChest autoChestSource;
   
+  @GameRegistry.ObjectHolder("automatedstorage:autochest_sink")
+  public static AutoChest autoChestSink;
+  
   public static void init() {
     
   }
@@ -26,5 +29,6 @@ public class ModBlocks
   public static void initModels() {
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(autoChest), 0, new ModelResourceLocation(autoChest.getRegistryName(), "inventory"));
     ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(autoChestSource), 0, new ModelResourceLocation(autoChestSource.getRegistryName(), "inventory"));
+    ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(autoChestSink), 0, new ModelResourceLocation(autoChestSink.getRegistryName(), "inventory"));
   }
 }

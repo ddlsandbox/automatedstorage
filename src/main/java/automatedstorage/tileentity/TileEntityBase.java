@@ -57,13 +57,16 @@ public abstract class TileEntityBase extends TileEntity implements ITickable
   {
     NBTTagCompound compound = new NBTTagCompound();
     this.writeSyncableNBT(compound, NBTType.SYNC);
-    return new SPacketUpdateTileEntity(this.pos, -1, compound);
+    final int METADATA = 0;
+    return new SPacketUpdateTileEntity(this.pos, METADATA, compound);
   }
 
   @Override
   public final void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
   {
     this.readSyncableNBT(pkt.getNbtCompound(), NBTType.SYNC);
+    NBTTagCompound updateTagDescribingTileEntityState = pkt.getNbtCompound();
+    handleUpdateTag(updateTagDescribingTileEntityState);
   }
 
   @Override

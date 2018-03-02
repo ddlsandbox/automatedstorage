@@ -36,7 +36,6 @@ public class ClientProxy extends CommonProxy
   @Override
   public void preInit(FMLPreInitializationEvent event)
   {
-    System.out.println("AUTOCHESTS Register proxy events");
     super.preInit(event);
     MinecraftForge.EVENT_BUS.register(this);
   }

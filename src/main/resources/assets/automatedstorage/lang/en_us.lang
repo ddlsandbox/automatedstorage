@@ -4,6 +4,7 @@ itemGroup.automatedstorage=Automated Storage
 # Entities
 tile.automatedstorage.autochest.name=Automated Chest
 tile.automatedstorage.autochest_source.name=Automated Chest Source
+tile.automatedstorage.autochest_sink.name=Automated Chest Sink
 
 # Items
 item.configurator.name=Configurator
