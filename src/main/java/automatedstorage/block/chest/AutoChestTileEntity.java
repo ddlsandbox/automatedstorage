@@ -4,11 +4,13 @@ import java.util.List;
 
 import automatedstorage.block.ModBlocks;
 import automatedstorage.item.ItemStackHandlerCustom;
+import automatedstorage.item.ItemStackHandlerFilter;
 import automatedstorage.item.StackUtil;
 import automatedstorage.tileentity.TileEntityInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -19,6 +21,8 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   private int transferCooldown = -1;
   private boolean isEmpty = true;
 
+  public ItemStackHandlerFilter filter;
+  
   public static final int AUTOCHEST_ROWS = 6;
   public static final int AUTOCHEST_COLS = 9;
   public static final int AUTOCHEST_SIZE = AUTOCHEST_ROWS * AUTOCHEST_COLS;
@@ -29,7 +33,8 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
 
   public AutoChestTileEntity()
   {
-    super("tile.autochest.name", AUTOCHEST_SIZE + AUTOCHEST_FILTER_SIZE, 0);
+    super("tile.autochest.name", AUTOCHEST_SIZE, 0);
+    filter = new ItemStackHandlerFilter(AUTOCHEST_FILTER_SIZE);
   }
 
   public int getNetworkId()
@@ -52,7 +57,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
 
   protected ItemStackHandlerCustom getSlots()
   {
-    return new ItemStackHandlerCustom(AUTOCHEST_SIZE + AUTOCHEST_FILTER_SIZE)
+    return new ItemStackHandlerCustom(AUTOCHEST_SIZE)
     {
       @Override
       public boolean canInsert(ItemStack stack, int slot)
@@ -67,12 +72,6 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
         AutoChestTileEntity.this.isEmpty = false;
         AutoChestTileEntity.this.markDirty();
       }
-
-      @Override
-      public int getSlotLimit(int slot)
-      {
-        return (slot >= AUTOCHEST_SIZE) ? 1 : super.getSlotLimit(slot);
-      }
     };
   }
 
@@ -82,6 +81,20 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
     compound.setInteger("NetworkId", this.networkId);
     compound.setInteger("TransferCooldown", this.transferCooldown);
     compound.setBoolean("Empty", this.isEmpty);
+    
+    NBTTagList dataForFilterSlots = new NBTTagList();
+    for (int i = 0; i < AUTOCHEST_FILTER_SIZE; ++i)
+    {
+      if (!filter.getStackInSlot(i).isEmpty())
+      {
+        NBTTagCompound dataForThisSlot = new NBTTagCompound();
+        dataForThisSlot.setByte("FilterSlot", (byte) i);
+        filter.getStackInSlot(i).writeToNBT(dataForThisSlot);
+        dataForFilterSlots.appendTag(dataForThisSlot);
+      }
+    }
+    compound.setTag("FilterItems", dataForFilterSlots);
+    
     super.writeSyncableNBT(compound, type);
   }
 
@@ -91,6 +104,19 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
     this.networkId = compound.getInteger("NetworkId");
     this.transferCooldown = compound.getInteger("TransferCooldown");
     this.isEmpty = compound.getBoolean("Empty");
+    
+    final byte NBT_TYPE_COMPOUND = 10; // See NBTBase.createNewByType() for a listing
+    NBTTagList dataForFilterSlots = compound.getTagList("FilterItems", NBT_TYPE_COMPOUND);
+
+    for (int i = 0; i < dataForFilterSlots.tagCount(); ++i)
+    {
+      NBTTagCompound dataForOneSlot = dataForFilterSlots.getCompoundTagAt(i);
+      byte slotNumber = dataForOneSlot.getByte("FilterSlot");
+      if (slotNumber >= 0 && slotNumber < AUTOCHEST_FILTER_SIZE)
+      {
+        filter.setStackInSlot(slotNumber, new ItemStack(dataForOneSlot));
+      }
+    }
     super.readSyncableNBT(compound, type);
   }
 
@@ -122,30 +148,16 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
 
   private boolean isItemInFilter(ItemStack stack)
   {
-    for (int slotId = 0; slotId < AUTOCHEST_FILTER_SIZE; slotId++)
-    {
-      ItemStack checkStack = getStackInSlot(AUTOCHEST_SIZE + slotId);
-      if (StackUtil.isValid(checkStack) && checkStack.getItem() == stack.getItem())
-        return true;
-    }
-    return false;  
+    return !filter.canInsert(stack, 0);
   }
   
   @Override
   public boolean isItemValidForSlot(int index, ItemStack stack)
   {
     if (getBlockType() == ModBlocks.autoChestSource || getBlockType() == ModBlocks.autoChestSink)
-      return (index < AUTOCHEST_SIZE);
+      return true;
     
-    boolean itemInFilter = isItemInFilter(stack); 
-    if (index < AUTOCHEST_SIZE)
-    {
-      return itemInFilter;
-    }
-    else
-    {
-      return !itemInFilter;
-    }
+    return isItemInFilter(stack); 
   }
   
   public boolean hasItemsForTransfer()

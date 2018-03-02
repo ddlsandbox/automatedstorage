@@ -34,7 +34,7 @@ public class GuiAutoChestHud extends Gui
     
     for (int fIndex = 0; fIndex < AutoChestTileEntity.AUTOCHEST_FILTER_SIZE; fIndex++)
     {
-      ItemStack stack = te.getStackInSlot(AutoChestTileEntity.AUTOCHEST_SIZE + fIndex);
+      ItemStack stack = te.filter.getStackInSlot(fIndex);
       if (StackUtil.isValid(stack))
       {
         mc.getRenderItem().renderItemAndEffectIntoGUI(stack, 

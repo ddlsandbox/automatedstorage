@@ -7,7 +7,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -36,14 +35,14 @@ public class AutoChestConfigContainer extends ContainerBase
 
   private void addOwnSlots()
   {
-    IItemHandler itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+    IItemHandler itemHandler = this.te.filter;
 
     for (int i = 0; i < AutoChestTileEntity.AUTOCHEST_FILTER_ROWS; i++)
     {
       for (int j = 0; j < AutoChestTileEntity.AUTOCHEST_FILTER_COLS; j++)
       {
         this.addSlotToContainer(new SlotItemHandler(itemHandler,
-            AutoChestTileEntity.AUTOCHEST_SIZE + j + i * AutoChestTileEntity.AUTOCHEST_FILTER_COLS, 
+            j + i * AutoChestTileEntity.AUTOCHEST_FILTER_COLS, 
             10 + j * 18,
             28 + i * 18)
         {
@@ -58,7 +57,7 @@ public class AutoChestConfigContainer extends ContainerBase
           @Override
           public boolean isItemValid(ItemStack stack)
           {
-            return te.isItemValidForSlot(AutoChestTileEntity.AUTOCHEST_SIZE, stack);
+            return te.filter.canInsert(stack, 0);
           }
         });
       }
@@ -69,6 +68,7 @@ public class AutoChestConfigContainer extends ContainerBase
   public void putStackInSlot(int slot, ItemStack stack)
   {
     super.putStackInSlot(slot, stack);
+    this.te.markDirty();
   }
   
   @Nullable
@@ -76,12 +76,13 @@ public class AutoChestConfigContainer extends ContainerBase
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
   {
     Slot theSlot = inventorySlots.get(index);
-
+    
     if (theSlot != null && theSlot.getHasStack())
     {
       ItemStack sourceStack = theSlot.getStack();
       ItemStack copyOfSourceStack = sourceStack.copy();
-
+      this.te.markDirty();
+      
       if (isVanillaSlot(index))
       {
         /* try putting in filter */
