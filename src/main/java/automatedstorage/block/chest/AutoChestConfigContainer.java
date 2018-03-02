@@ -3,11 +3,13 @@ package automatedstorage.block.chest;
 import javax.annotation.Nullable;
 
 import automatedstorage.container.ContainerBase;
+import automatedstorage.item.StackUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class AutoChestConfigContainer extends ContainerBase
@@ -107,17 +109,42 @@ public class AutoChestConfigContainer extends ContainerBase
         theSlot.onSlotChanged();
       }
 
-      if (getStackSize(sourceStack) == getStackSize(copyOfSourceStack))
-      {
-        return ItemStack.EMPTY;
-      }
-      theSlot.onTake(playerIn, sourceStack);
-
       return copyOfSourceStack;
     }
     return ItemStack.EMPTY;
   }
 
+  @Override
+  protected boolean mergeItemStack(ItemStack stack, int start, int end, boolean backwards)
+  {
+    boolean flag1 = false;
+    int k = (backwards ? end - 1 : start);
+
+    k = (backwards ? end - 1 : start);
+    while (!backwards && k < end || backwards && k >= start)
+    {
+      Slot slot = (Slot) inventorySlots.get(k);
+      ItemStack itemstack1 = slot.getStack();
+
+      if (!slot.isItemValid(stack))
+      {
+        k += (backwards ? -1 : 1);
+        continue;
+      }
+
+      if (!StackUtil.isValid(itemstack1))
+      {
+        slot.putStack(ItemHandlerHelper.copyStackWithSize(stack, 1));
+        slot.onSlotChanged();
+        flag1 = true;
+        break;
+      }
+
+      k += (backwards ? -1 : 1);
+    }
+
+    return flag1;
+  }
   
   public void updateNetwork(int newNetwork)
   {

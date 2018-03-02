@@ -17,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class AutoChestTileEntity extends TileEntityInventory implements ITickable
 {
-  private int networkId = 0;
+  private int networkId;
   private int transferCooldown = -1;
   private boolean isEmpty = true;
 
@@ -237,14 +237,12 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
         ItemStack itemstack = this.getStackInSlot(i).copy();
         IInventory iinventory = this.getInventoryForTransfer(itemstack);
 
-        if (iinventory == null)
+        if (iinventory == null || this.isInventoryFull(iinventory))
         {
-          return false;
+          /* slot cannot be transferred */
+          continue;
         } 
-        else if (this.isInventoryFull(iinventory))
-       {
-          return false;
-        } else
+        else
         {
           ItemStack itemstack1 = putStackInInventoryAllSlots(iinventory, this.decrStackSize(i, 1));
 

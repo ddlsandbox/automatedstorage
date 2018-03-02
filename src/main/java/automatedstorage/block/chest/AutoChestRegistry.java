@@ -61,6 +61,16 @@ public class AutoChestRegistry extends WorldSavedData
     reverseLookup.remove(pos);
     markDirty();
   }
+  
+  public void removeAutoChest(BlockPos pos)
+  {
+    if (reverseLookup.containsKey(pos))
+    {
+      /* remove old connection */
+      autoChestRegistry.get(reverseLookup.get(pos)).remove(pos);
+    }
+    markDirty();
+  }
 
   public Collection<List<BlockPos>> getAutoChests()
   {
