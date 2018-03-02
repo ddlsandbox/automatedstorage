@@ -15,8 +15,9 @@ import net.minecraft.util.math.BlockPos;
 
 public class AutoChestTileEntity extends TileEntityInventory implements ITickable
 {
-  private int networkId;
+  private int networkId = 0;
   private int transferCooldown = -1;
+  private boolean isEmpty = true;
 
   public static final int AUTOCHEST_ROWS = 6;
   public static final int AUTOCHEST_COLS = 9;
@@ -29,8 +30,6 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   public AutoChestTileEntity()
   {
     super("tile.autochest.name", AUTOCHEST_SIZE + AUTOCHEST_FILTER_SIZE, 0);
-
-    this.networkId = 0;
   }
 
   public int getNetworkId()
@@ -65,6 +64,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
       protected void onContentsChanged(int slot)
       {
         super.onContentsChanged(slot);
+        AutoChestTileEntity.this.isEmpty = false;
         AutoChestTileEntity.this.markDirty();
       }
 
@@ -81,6 +81,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   {
     compound.setInteger("NetworkId", this.networkId);
     compound.setInteger("TransferCooldown", this.transferCooldown);
+    compound.setBoolean("Empty", this.isEmpty);
     super.writeSyncableNBT(compound, type);
   }
 
@@ -89,6 +90,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   {
     this.networkId = compound.getInteger("NetworkId");
     this.transferCooldown = compound.getInteger("TransferCooldown");
+    this.isEmpty = compound.getBoolean("Empty");
     super.readSyncableNBT(compound, type);
   }
 
@@ -108,7 +110,10 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
       if (!otherPos.equals(getPos()))
       {
         AutoChestTileEntity entity = (AutoChestTileEntity) world.getTileEntity(otherPos);
-        if (entity.isItemValidForSlot(0, stack))
+
+        if (entity == null)
+          autoChestRegistry.removeAutoChest(networkId, otherPos);
+        else if (entity.isItemValidForSlot(0, stack))
           return entity;
       }
     }
@@ -151,9 +156,14 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   @Override
   public boolean isEmpty()
   {
+    if (this.isEmpty)
+      return true;
+    
     for (int i = 0; i < AUTOCHEST_SIZE; ++i)
       if (StackUtil.isNotNull(getStackInSlot(i)))
         return false;
+    
+    this.isEmpty = true;
     return true;
   }
   

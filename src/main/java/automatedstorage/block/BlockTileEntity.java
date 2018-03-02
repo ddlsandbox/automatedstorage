@@ -1,7 +1,5 @@
 package automatedstorage.block;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -34,10 +32,6 @@ public abstract class BlockTileEntity<TE extends TileEntity> extends BlockBase i
     return true;
   }
   
-//  @Nullable
-//  @Override
-//  public abstract TE createTileEntity(World world, IBlockState state);
-
   @Override
   public abstract TileEntity createNewTileEntity(World worldIn, int meta);
   
