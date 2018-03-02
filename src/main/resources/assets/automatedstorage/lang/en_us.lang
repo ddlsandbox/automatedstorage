@@ -5,3 +5,6 @@ itemGroup.automatedstorage=Automated Storage
 tile.automatedstorage.autochest.name=Automated Chest
 tile.automatedstorage.autochest_source.name=Automated Chest Source
 
+# Items
+item.configurator.name=Configurator
+

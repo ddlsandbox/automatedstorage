@@ -3,6 +3,7 @@ package automatedstorage.block.chest;
 import automatedstorage.AutomatedStorage;
 import automatedstorage.block.BlockTileEntity;
 import automatedstorage.gui.ModGuiHandler;
+import automatedstorage.item.ModItems;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -35,19 +36,22 @@ public class AutoChest extends BlockTileEntity<AutoChestTileEntity>
   }
 
   @Override
-  public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand,
+  public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
       EnumFacing side, float hitX, float hitY, float hitZ)
   {
+    if (player.getHeldItem(hand).getItem() == ModItems.configurator)
+      return false;
+    
     if (worldIn.isRemote)
       return true;
-
-    if (playerIn.isSneaking())
+    
+    if (player.isSneaking())
     {
-      playerIn.openGui(AutomatedStorage.instance, ModGuiHandler.AUTOCHEST_CONFIG, worldIn, pos.getX(), pos.getY(),
+      player.openGui(AutomatedStorage.instance, ModGuiHandler.AUTOCHEST_CONFIG, worldIn, pos.getX(), pos.getY(),
           pos.getZ());
     } else
     {
-      playerIn.openGui(AutomatedStorage.instance, ModGuiHandler.AUTOCHEST, worldIn, pos.getX(), pos.getY(), pos.getZ());
+      player.openGui(AutomatedStorage.instance, ModGuiHandler.AUTOCHEST, worldIn, pos.getX(), pos.getY(), pos.getZ());
     }
     return true;
   }

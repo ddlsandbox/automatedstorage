@@ -1,9 +1,11 @@
 package automatedstorage.proxy;
 
+
 import automatedstorage.AutomatedStorage;
 import automatedstorage.block.ModBlocks;
 import automatedstorage.block.chest.AutoChest;
 import automatedstorage.block.chest.AutoChestTileEntity;
+import automatedstorage.item.ModItems;
 import automatedstorage.network.PacketRequestUpdateNetwork;
 import automatedstorage.network.PacketServerToClient;
 import automatedstorage.network.PacketUpdateNetwork;
@@ -63,6 +65,8 @@ public class CommonProxy
   {
     event.getRegistry().register(new ItemBlock(ModBlocks.autoChest).setRegistryName(ModBlocks.autoChest.getRegistryName()));
     event.getRegistry().register(new ItemBlock(ModBlocks.autoChestSource).setRegistryName(ModBlocks.autoChestSource.getRegistryName()));
+    
+    event.getRegistry().register(ModItems.configurator);
   }
 
   public void registerItemRenderer(Item item, int meta, String id)

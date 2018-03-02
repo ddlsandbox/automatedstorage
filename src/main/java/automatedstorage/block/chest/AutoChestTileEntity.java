@@ -41,6 +41,13 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   public void setNetworkId(int networkId)
   {
     this.networkId = networkId;
+    
+    if (getBlockType() != ModBlocks.autoChestSource)
+    {
+      AutoChestRegistry autoChestRegistry = AutoChestRegistry.get(this.getWorld());
+      autoChestRegistry.addAutoChest(networkId, getPos());
+    }
+    
     this.markDirty();
   }
 
