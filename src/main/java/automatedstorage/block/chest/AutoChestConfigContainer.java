@@ -38,7 +38,10 @@ public class AutoChestConfigContainer extends ContainerBase
   private void addOwnSlots()
   {
     IItemHandler itemHandler = this.te.filter;
+    IItemHandler metaHandler = this.te.metafilter;
 
+    /* item filter */
+    
     for (int i = 0; i < AutoChestTileEntity.AUTOCHEST_FILTER_ROWS; i++)
     {
       for (int j = 0; j < AutoChestTileEntity.AUTOCHEST_FILTER_COLS; j++)
@@ -63,6 +66,30 @@ public class AutoChestConfigContainer extends ContainerBase
           }
         });
       }
+    }
+    
+    /* meta filter */
+    for (int j = 0; j < AutoChestTileEntity.AUTOCHEST_META_SIZE; j++)
+    {
+      this.addSlotToContainer(new SlotItemHandler(metaHandler,
+          j, 
+          10 + j * 18,
+          100)
+      {
+
+        /* set a maximum of 1 per slot */
+        @Override
+        public int getSlotStackLimit()
+        {
+          return 1;
+        }
+
+        @Override
+        public boolean isItemValid(ItemStack stack)
+        {
+          return te.metafilter.canInsert(stack, 0);
+        }
+      });
     }
   }
   
@@ -93,9 +120,12 @@ public class AutoChestConfigContainer extends ContainerBase
         {
           return ItemStack.EMPTY;
         }
-      } else
+      }
+      else
       {
-        if (!this.mergeItemStack(sourceStack, vanillaFirstSlotIndex, vanillaFirstSlotIndex + vanillaSlotCount, false))
+        if (!this.mergeItemStack(sourceStack, 
+            customFirstSlotIndex + AutoChestTileEntity.AUTOCHEST_FILTER_SIZE, 
+            customFirstSlotIndex + AutoChestTileEntity.AUTOCHEST_FILTER_SIZE + AutoChestTileEntity.AUTOCHEST_META_SIZE, false))
         {
           return ItemStack.EMPTY;
         }

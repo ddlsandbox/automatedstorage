@@ -3,7 +3,6 @@ package automatedstorage.gui;
 import java.awt.Color;
 
 import automatedstorage.AutomatedStorage;
-import automatedstorage.block.ModBlocks;
 import automatedstorage.block.chest.AutoChestConfigContainer;
 import automatedstorage.block.chest.AutoChestTileEntity;
 import automatedstorage.network.PacketUpdateNetwork;
@@ -19,10 +18,10 @@ public class AutoChestConfigGui extends GuiContainer
   public static final int WIDTH = 176;
   public static final int HEIGHT = 126 + 86;
 
-  private static final int BUTTON_ADD_X = 150;
-  private static final int BUTTON_ADD_Y = 6;
-  private static final int BUTTON_SUB_X = 100;
-  private static final int BUTTON_SUB_Y = 6;
+  private static final int BUTTON_ADD_X = 154;
+  private static final int BUTTON_ADD_Y = 5;
+  private static final int BUTTON_SUB_X = 117;
+  private static final int BUTTON_SUB_Y = 5;
   
   private static final ResourceLocation gui_main = new ResourceLocation(AutomatedStorage.modId,
       "textures/gui/autochest_config.png");
@@ -33,12 +32,16 @@ public class AutoChestConfigGui extends GuiContainer
   AutoChestConfigContainer container;
   private InventoryPlayer playerInv;
   
+  private String guiName;
+  
   public AutoChestConfigGui(AutoChestTileEntity tileEntity, AutoChestConfigContainer container, InventoryPlayer playerInv)
   {
     super(container);
 
     xSize = WIDTH;
     ySize = HEIGHT;
+    
+    guiName = tileEntity.getBlockType().getLocalizedName() + " Config";
     
     this.tileEntity = tileEntity;
     this.playerInv = playerInv;
@@ -101,17 +104,21 @@ public class AutoChestConfigGui extends GuiContainer
   @Override
   public void drawGuiContainerForegroundLayer(int x, int y)
   {
-    final String name = AutomatedStorage.proxy.localize(ModBlocks.autoChest.getUnlocalizedName() + ".name") + " Config";
-    final int LABEL_XPOS = (xSize) / 2 - fontRenderer.getStringWidth(name) / 2;
+    final int LABEL_XPOS = (xSize) / 2 - fontRenderer.getStringWidth(guiName) / 2;
     final int LABEL_YPOS = -10;
-    fontRenderer.drawString(name, LABEL_XPOS, LABEL_YPOS, Color.cyan.getRGB());
+    fontRenderer.drawString(guiName, LABEL_XPOS, LABEL_YPOS, Color.cyan.getRGB());
     
-    final String filterName = "Filter";
-    final int FILTER_YPOS = 5;
-    final int FILTER_XPOS = (xSize) / 2 - fontRenderer.getStringWidth(filterName) / 2;
-    fontRenderer.drawString(filterName, FILTER_XPOS, FILTER_YPOS, Color.white.getRGB());
+    final String filterName = "Network:";
+    final int FILTER_YPOS = 10;
+    final int FILTER_XPOS = BUTTON_SUB_X - fontRenderer.getStringWidth(filterName) - 4;
+    fontRenderer.drawString(filterName, FILTER_XPOS, FILTER_YPOS, Color.black.getRGB());
     
-    fontRenderer.drawString(String.valueOf(tileEntity.getNetworkId()), 136, 6, Color.cyan.getRGB());
+    fontRenderer.drawString("Item Filter", 9, 16, Color.black.getRGB());
+    fontRenderer.drawString("Meta Filter", 9, 88, Color.black.getRGB());
+    
+    String netIdStr = String.valueOf(tileEntity.getNetworkId());
+    int strX = 136 + (18 - fontRenderer.getStringWidth(netIdStr))/2;
+    fontRenderer.drawString(netIdStr, strX, 10, Color.cyan.getRGB());
   }
 
   @Override

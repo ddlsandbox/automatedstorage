@@ -35,7 +35,7 @@ public class AutoChestRegistry extends WorldSavedData
     super(name);
   }
 
-  public void addAutoChest(int networkId, BlockPos pos)
+  public void addAutoChest(int networkId, BlockPos pos, int type)
   {
     if (reverseLookup.containsKey(pos))
     {
@@ -47,7 +47,10 @@ public class AutoChestRegistry extends WorldSavedData
     {
       autoChestRegistry.put(networkId, new ArrayList<BlockPos>());
     }
-    autoChestRegistry.get(networkId).add(pos);
+    if (type == 0)
+      autoChestRegistry.get(networkId).add(0, pos);
+    else
+      autoChestRegistry.get(networkId).add(pos);
     
     /* set/update reverse lookup */
     reverseLookup.put(pos, networkId);

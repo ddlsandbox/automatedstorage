@@ -2,6 +2,7 @@ package automatedstorage.block.chest;
 
 import automatedstorage.AutomatedStorage;
 import automatedstorage.block.BlockTileEntity;
+import automatedstorage.block.ModBlocks;
 import automatedstorage.gui.ModGuiHandler;
 import automatedstorage.item.ModItems;
 import net.minecraft.block.material.Material;
@@ -62,7 +63,7 @@ public class AutoChest extends BlockTileEntity<AutoChestTileEntity>
   private void initNetwork(World world, BlockPos pos)
   {
     AutoChestRegistry autoChestRegistry = AutoChestRegistry.get(world);
-    autoChestRegistry.addAutoChest(0, pos);
+    autoChestRegistry.addAutoChest(0, pos, (this == ModBlocks.autoChestSink)?1:0);
   }
   
   private void cleanNetwork(World world, BlockPos pos)

@@ -22,6 +22,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   private boolean isEmpty = true;
 
   public ItemStackHandlerFilter filter;
+  public ItemStackHandlerFilter metafilter;
   
   public static final int AUTOCHEST_ROWS = 6;
   public static final int AUTOCHEST_COLS = 9;
@@ -31,10 +32,13 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   public static final int AUTOCHEST_FILTER_COLS = 9;
   public static final int AUTOCHEST_FILTER_SIZE = AUTOCHEST_FILTER_ROWS * AUTOCHEST_FILTER_COLS;
 
+  public static final int AUTOCHEST_META_SIZE = 9;
+  
   public AutoChestTileEntity()
   {
     super("tile.autochest.name", AUTOCHEST_SIZE, 0);
     filter = new ItemStackHandlerFilter(AUTOCHEST_FILTER_SIZE);
+    metafilter = new ItemStackHandlerFilter(AUTOCHEST_META_SIZE);
   }
 
   public int getNetworkId()
@@ -49,7 +53,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
     if (getBlockType() != ModBlocks.autoChestSource)
     {
       AutoChestRegistry autoChestRegistry = AutoChestRegistry.get(this.getWorld());
-      autoChestRegistry.addAutoChest(networkId, getPos());
+      autoChestRegistry.addAutoChest(networkId, getPos(), getBlockType() == ModBlocks.autoChestSink?1:0);
     }
     
     this.markDirty();
@@ -82,6 +86,8 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
     compound.setInteger("TransferCooldown", this.transferCooldown);
     compound.setBoolean("Empty", this.isEmpty);
     
+    /* item filter */
+    
     NBTTagList dataForFilterSlots = new NBTTagList();
     for (int i = 0; i < AUTOCHEST_FILTER_SIZE; ++i)
     {
@@ -95,19 +101,36 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
     }
     compound.setTag("FilterItems", dataForFilterSlots);
     
+    /* meta filter */
+    
+    NBTTagList dataForMetaFilterSlots = new NBTTagList();
+    for (int i = 0; i < AUTOCHEST_META_SIZE; ++i)
+    {
+      if (!metafilter.getStackInSlot(i).isEmpty())
+      {
+        NBTTagCompound dataForThisSlot = new NBTTagCompound();
+        dataForThisSlot.setByte("MetaFilterSlot", (byte) i);
+        metafilter.getStackInSlot(i).writeToNBT(dataForThisSlot);
+        dataForMetaFilterSlots.appendTag(dataForThisSlot);
+      }
+    }
+    compound.setTag("MetaFilterItems", dataForMetaFilterSlots);
+    
     super.writeSyncableNBT(compound, type);
   }
 
   @Override
   public void readSyncableNBT(NBTTagCompound compound, NBTType type)
   {
+    final byte NBT_TYPE_COMPOUND = 10; // See NBTBase.createNewByType() for a listing
+    
     this.networkId = compound.getInteger("NetworkId");
     this.transferCooldown = compound.getInteger("TransferCooldown");
     this.isEmpty = compound.getBoolean("Empty");
     
-    final byte NBT_TYPE_COMPOUND = 10; // See NBTBase.createNewByType() for a listing
+    /* item filter */
+    
     NBTTagList dataForFilterSlots = compound.getTagList("FilterItems", NBT_TYPE_COMPOUND);
-
     for (int i = 0; i < dataForFilterSlots.tagCount(); ++i)
     {
       NBTTagCompound dataForOneSlot = dataForFilterSlots.getCompoundTagAt(i);
@@ -117,6 +140,20 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
         filter.setStackInSlot(slotNumber, new ItemStack(dataForOneSlot));
       }
     }
+    
+    /* meta filter */
+    
+    NBTTagList dataForMetaFilterSlots = compound.getTagList("MetaFilterItems", NBT_TYPE_COMPOUND);
+    for (int i = 0; i < dataForMetaFilterSlots.tagCount(); ++i)
+    {
+      NBTTagCompound dataForOneSlot = dataForFilterSlots.getCompoundTagAt(i);
+      byte slotNumber = dataForOneSlot.getByte("MetaFilterSlot");
+      if (slotNumber >= 0 && slotNumber < AUTOCHEST_META_SIZE)
+      {
+        metafilter.setStackInSlot(slotNumber, new ItemStack(dataForOneSlot));
+      }
+    }
+    
     super.readSyncableNBT(compound, type);
   }
 

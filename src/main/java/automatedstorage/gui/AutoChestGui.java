@@ -3,7 +3,6 @@ package automatedstorage.gui;
 import java.awt.Color;
 
 import automatedstorage.AutomatedStorage;
-import automatedstorage.block.ModBlocks;
 import automatedstorage.block.chest.AutoChestContainer;
 import automatedstorage.block.chest.AutoChestTileEntity;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -14,6 +13,8 @@ public class AutoChestGui extends GuiContainer
 {
   public static final int WIDTH = 176;
   public static final int HEIGHT = 126 + 86;
+  
+  private String guiName;
 
   private static final ResourceLocation gui_main = new ResourceLocation(AutomatedStorage.modId,
       "textures/gui/autochest.png");
@@ -24,6 +25,7 @@ public class AutoChestGui extends GuiContainer
   {
     super(container);
 
+    guiName = tileEntity.getBlockType().getLocalizedName();
     xSize = WIDTH;
     ySize = HEIGHT;
   }
@@ -37,10 +39,9 @@ public class AutoChestGui extends GuiContainer
   @Override
   public void drawGuiContainerForegroundLayer(int x, int y)
   {
-    final String name = AutomatedStorage.proxy.localize(ModBlocks.autoChest.getUnlocalizedName() + ".name");
-    final int LABEL_XPOS = (xSize) / 2 - fontRenderer.getStringWidth(name) / 2;
+    final int LABEL_XPOS = (xSize) / 2 - fontRenderer.getStringWidth(guiName) / 2;
     final int LABEL_YPOS = -10;
-    fontRenderer.drawString(name, LABEL_XPOS, LABEL_YPOS, Color.cyan.getRGB());
+    fontRenderer.drawString(guiName, LABEL_XPOS, LABEL_YPOS, Color.cyan.getRGB());
   }
 
   @Override

@@ -16,22 +16,24 @@ public class PacketUpdateNetwork implements IMessage
 {
   private BlockPos pos;
   private int newNetwork;
+  private int type;
   private boolean updateRegistry;
 
   public PacketUpdateNetwork()
   {
   }
 
-  public PacketUpdateNetwork(BlockPos pos, int newNetwork, boolean updateRegistry)
+  public PacketUpdateNetwork(BlockPos pos, int newNetwork, int type, boolean updateRegistry)
   {
     this.pos = pos;
     this.newNetwork = newNetwork;
+    this.type = type;
     this.updateRegistry = updateRegistry;
   }
 
   public PacketUpdateNetwork(AutoChestTileEntity te)
   {
-    this(te.getPos(), te.getNetworkId(), te.getBlockType() == ModBlocks.autoChest);
+    this(te.getPos(), te.getNetworkId(), te.getBlockType() == ModBlocks.autoChestSink?1:0, te.getBlockType() == ModBlocks.autoChest);
   }
 
   @Override
@@ -39,6 +41,7 @@ public class PacketUpdateNetwork implements IMessage
   {
     buf.writeLong(this.pos.toLong());
     buf.writeInt(this.newNetwork);
+    buf.writeInt(this.type);
     buf.writeBoolean(this.updateRegistry);
   }
 
@@ -47,6 +50,7 @@ public class PacketUpdateNetwork implements IMessage
   {
     this.pos = BlockPos.fromLong(buf.readLong());
     this.newNetwork = buf.readInt();
+    this.type = buf.readInt();
     this.updateRegistry = buf.readBoolean();
   }
 
@@ -68,7 +72,7 @@ public class PacketUpdateNetwork implements IMessage
         {
           if (message.updateRegistry)
           {
-            autoChestRegistry.addAutoChest(message.newNetwork, message.pos);
+            autoChestRegistry.addAutoChest(message.newNetwork, message.pos, message.type);
           }
           
           ((AutoChestConfigContainer) serverPlayer.openContainer).updateNetwork(message.newNetwork);
