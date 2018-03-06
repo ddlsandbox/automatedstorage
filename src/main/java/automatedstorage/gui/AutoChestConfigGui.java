@@ -15,8 +15,9 @@ import net.minecraft.util.text.TextComponentString;
 
 public class AutoChestConfigGui extends GuiContainer
 {
-  public static final int WIDTH = 176;
-  public static final int HEIGHT = 126 + 86;
+  public static final int WIDTH = 178;
+  public static final int GUI_HEIGHT = 90;
+  public static final int HEIGHT = GUI_HEIGHT + 86;
 
   private static final int BUTTON_ADD_X = 154;
   private static final int BUTTON_ADD_Y = 5;
@@ -114,7 +115,6 @@ public class AutoChestConfigGui extends GuiContainer
     fontRenderer.drawString(filterName, FILTER_XPOS, FILTER_YPOS, Color.black.getRGB());
     
     fontRenderer.drawString("Item Filter", 9, 16, Color.black.getRGB());
-    fontRenderer.drawString("Meta Filter", 9, 88, Color.black.getRGB());
     
     String netIdStr = String.valueOf(tileEntity.getNetworkId());
     int strX = 136 + (18 - fontRenderer.getStringWidth(netIdStr))/2;
@@ -127,10 +127,10 @@ public class AutoChestConfigGui extends GuiContainer
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
     this.mc.getTextureManager().bindTexture(gui_main);
-    this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, 176, 126);
+    this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, 176, GUI_HEIGHT);
 
     this.mc.getTextureManager().bindTexture(gui_inv);
-    this.drawTexturedModalRect(this.guiLeft, this.guiTop + 126, 0, 0, 176, 86);
+    this.drawTexturedModalRect(this.guiLeft, this.guiTop + GUI_HEIGHT, 0, 0, 176, 86);
   }
 
   @Override

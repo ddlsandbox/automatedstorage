@@ -20,13 +20,15 @@ public class ItemStackHandlerFilter extends ItemStackHandler
   @Override
   public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
   {
+//    super.insertItem(slot, ItemHandlerHelper.copyStackWithSize(stack, 1), simulate);
+//    return stack;
     if (!StackUtil.isValid(stack))
     {
       return StackUtil.getNull();
     }
     this.validateSlotIndex(slot);
 
-    if (canInsert(stack, slot) && !simulate)
+    if (canInsert(stack, slot)) //) && !simulate)
     {
       this.stacks.set(slot, 
          ItemHandlerHelper.copyStackWithSize(stack, 1));
@@ -52,7 +54,7 @@ public class ItemStackHandlerFilter extends ItemStackHandler
     }
     return true;
   }
-
+  
   public boolean canExtract(ItemStack stack, int slot)
   {
     return true;

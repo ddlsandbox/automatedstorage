@@ -17,7 +17,10 @@ public class AutoChestConfigContainer extends ContainerBase
 
   private AutoChestTileEntity te;
 
-  private static final int AUTOCHEST_INV_HEIGHT = 126;
+  private static final int AUTOCHEST_INV_HEIGHT = 90;
+  private static final int CUSTOM_INV_X = 8;
+  private static final int CUSTOM_INV_Y = 28;
+  private static final int TILE_SIZE = 18;
 
   public AutoChestConfigContainer(InventoryPlayer playerInventory, AutoChestTileEntity te)
   {
@@ -38,7 +41,6 @@ public class AutoChestConfigContainer extends ContainerBase
   private void addOwnSlots()
   {
     IItemHandler itemHandler = this.te.filter;
-    IItemHandler metaHandler = this.te.metafilter;
 
     /* item filter */
     
@@ -48,8 +50,8 @@ public class AutoChestConfigContainer extends ContainerBase
       {
         this.addSlotToContainer(new SlotItemHandler(itemHandler,
             j + i * AutoChestTileEntity.AUTOCHEST_FILTER_COLS, 
-            10 + j * 18,
-            28 + i * 18)
+            CUSTOM_INV_X + j * TILE_SIZE,
+            CUSTOM_INV_Y + i * TILE_SIZE)
         {
 
           /* set a maximum of 1 per slot */
@@ -66,30 +68,6 @@ public class AutoChestConfigContainer extends ContainerBase
           }
         });
       }
-    }
-    
-    /* meta filter */
-    for (int j = 0; j < AutoChestTileEntity.AUTOCHEST_META_SIZE; j++)
-    {
-      this.addSlotToContainer(new SlotItemHandler(metaHandler,
-          j, 
-          10 + j * 18,
-          100)
-      {
-
-        /* set a maximum of 1 per slot */
-        @Override
-        public int getSlotStackLimit()
-        {
-          return 1;
-        }
-
-        @Override
-        public boolean isItemValid(ItemStack stack)
-        {
-          return te.metafilter.canInsert(stack, 0);
-        }
-      });
     }
   }
   
@@ -116,19 +94,14 @@ public class AutoChestConfigContainer extends ContainerBase
       {
         /* try putting in filter */
         if (!this.mergeItemStack(sourceStack, customFirstSlotIndex,
-            customFirstSlotIndex + AutoChestTileEntity.AUTOCHEST_FILTER_SIZE, false))
+              customFirstSlotIndex + AutoChestTileEntity.AUTOCHEST_FILTER_SIZE, false))
         {
           return ItemStack.EMPTY;
         }
       }
       else
       {
-        if (!this.mergeItemStack(sourceStack, 
-            customFirstSlotIndex + AutoChestTileEntity.AUTOCHEST_FILTER_SIZE, 
-            customFirstSlotIndex + AutoChestTileEntity.AUTOCHEST_FILTER_SIZE + AutoChestTileEntity.AUTOCHEST_META_SIZE, false))
-        {
-          return ItemStack.EMPTY;
-        }
+        return ItemStack.EMPTY;
       }
 
       if (!isValid(sourceStack))
@@ -191,16 +164,5 @@ public class AutoChestConfigContainer extends ContainerBase
   {
     return stack != null && !ItemStack.areItemStacksEqual(stack, ItemStack.EMPTY) && stack.getCount() > 0
         && stack.getItem() != null;
-  }
-
-  public static int getStackSize(ItemStack stack)
-  {
-    if (!isValid(stack))
-    {
-      return 0;
-    } else
-    {
-      return stack.getCount();
-    }
   }
 }

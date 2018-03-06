@@ -18,6 +18,9 @@ public class AutoChestContainer extends ContainerBase
   private AutoChestTileEntity te;
 
   private static final int AUTOCHEST_INV_HEIGHT = 126;
+  private static final int CUSTOM_INV_X = 8;
+  private static final int CUSTOM_INV_Y = 8;
+  private static final int TILE_SIZE = 18;
 
   public AutoChestContainer(InventoryPlayer playerInventory, AutoChestTileEntity te)
   {
@@ -44,8 +47,8 @@ public class AutoChestContainer extends ContainerBase
       {
         this.addSlotToContainer(
             new SlotItemHandler(itemHandler, j + i * AutoChestTileEntity.AUTOCHEST_COLS, 
-                10 + j * 18, 
-                10 + i * 18)
+                CUSTOM_INV_X + j * TILE_SIZE, 
+                CUSTOM_INV_Y + i * TILE_SIZE)
             {
               @Override
               public boolean isItemValid(ItemStack stack)

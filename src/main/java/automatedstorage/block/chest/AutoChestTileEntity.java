@@ -22,7 +22,6 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   private boolean isEmpty = true;
 
   public ItemStackHandlerFilter filter;
-  public ItemStackHandlerFilter metafilter;
   
   public static final int AUTOCHEST_ROWS = 6;
   public static final int AUTOCHEST_COLS = 9;
@@ -31,14 +30,11 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   public static final int AUTOCHEST_FILTER_ROWS = 3;
   public static final int AUTOCHEST_FILTER_COLS = 9;
   public static final int AUTOCHEST_FILTER_SIZE = AUTOCHEST_FILTER_ROWS * AUTOCHEST_FILTER_COLS;
-
-  public static final int AUTOCHEST_META_SIZE = 9;
   
   public AutoChestTileEntity()
   {
     super("tile.autochest.name", AUTOCHEST_SIZE, 0);
     filter = new ItemStackHandlerFilter(AUTOCHEST_FILTER_SIZE);
-    metafilter = new ItemStackHandlerFilter(AUTOCHEST_META_SIZE);
   }
 
   public int getNetworkId()
@@ -101,21 +97,6 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
     }
     compound.setTag("FilterItems", dataForFilterSlots);
     
-    /* meta filter */
-    
-    NBTTagList dataForMetaFilterSlots = new NBTTagList();
-    for (int i = 0; i < AUTOCHEST_META_SIZE; ++i)
-    {
-      if (!metafilter.getStackInSlot(i).isEmpty())
-      {
-        NBTTagCompound dataForThisSlot = new NBTTagCompound();
-        dataForThisSlot.setByte("MetaFilterSlot", (byte) i);
-        metafilter.getStackInSlot(i).writeToNBT(dataForThisSlot);
-        dataForMetaFilterSlots.appendTag(dataForThisSlot);
-      }
-    }
-    compound.setTag("MetaFilterItems", dataForMetaFilterSlots);
-    
     super.writeSyncableNBT(compound, type);
   }
 
@@ -138,19 +119,6 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
       if (slotNumber >= 0 && slotNumber < AUTOCHEST_FILTER_SIZE)
       {
         filter.setStackInSlot(slotNumber, new ItemStack(dataForOneSlot));
-      }
-    }
-    
-    /* meta filter */
-    
-    NBTTagList dataForMetaFilterSlots = compound.getTagList("MetaFilterItems", NBT_TYPE_COMPOUND);
-    for (int i = 0; i < dataForMetaFilterSlots.tagCount(); ++i)
-    {
-      NBTTagCompound dataForOneSlot = dataForFilterSlots.getCompoundTagAt(i);
-      byte slotNumber = dataForOneSlot.getByte("MetaFilterSlot");
-      if (slotNumber >= 0 && slotNumber < AUTOCHEST_META_SIZE)
-      {
-        metafilter.setStackInSlot(slotNumber, new ItemStack(dataForOneSlot));
       }
     }
     
@@ -194,7 +162,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
     if (getBlockType() == ModBlocks.autoChestSource || getBlockType() == ModBlocks.autoChestSink)
       return true;
     
-    return isItemInFilter(stack); 
+    return index >= AUTOCHEST_SIZE || isItemInFilter(stack); 
   }
   
   public boolean hasItemsForTransfer()
