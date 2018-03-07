@@ -1,9 +1,25 @@
-package automatedstorage.block.chest;
+/* Automated Chests Minecraft Mod
+ * Copyright (C) 2018 Diego Darriba
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+package automatedstorage.container;
 
 import javax.annotation.Nullable;
 
-import automatedstorage.container.ContainerBase;
 import automatedstorage.item.StackUtil;
+import automatedstorage.tileentity.TileEntityAutoChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -12,17 +28,17 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class AutoChestConfigContainer extends ContainerBase
+public class ContainerAutoChestConfig extends ContainerBase
 {
 
-  private AutoChestTileEntity te;
+  private TileEntityAutoChest te;
 
   private static final int AUTOCHEST_INV_HEIGHT = 90;
   private static final int CUSTOM_INV_X = 8;
   private static final int CUSTOM_INV_Y = 28;
   private static final int TILE_SIZE = 18;
 
-  public AutoChestConfigContainer(InventoryPlayer playerInventory, AutoChestTileEntity te)
+  public ContainerAutoChestConfig(InventoryPlayer playerInventory, TileEntityAutoChest te)
   {
     super(true, false);
 
@@ -44,12 +60,12 @@ public class AutoChestConfigContainer extends ContainerBase
 
     /* item filter */
     
-    for (int i = 0; i < AutoChestTileEntity.AUTOCHEST_FILTER_ROWS; i++)
+    for (int i = 0; i < TileEntityAutoChest.AUTOCHEST_FILTER_ROWS; i++)
     {
-      for (int j = 0; j < AutoChestTileEntity.AUTOCHEST_FILTER_COLS; j++)
+      for (int j = 0; j < TileEntityAutoChest.AUTOCHEST_FILTER_COLS; j++)
       {
         this.addSlotToContainer(new SlotItemHandler(itemHandler,
-            j + i * AutoChestTileEntity.AUTOCHEST_FILTER_COLS, 
+            j + i * TileEntityAutoChest.AUTOCHEST_FILTER_COLS, 
             CUSTOM_INV_X + j * TILE_SIZE,
             CUSTOM_INV_Y + i * TILE_SIZE)
         {
@@ -94,7 +110,7 @@ public class AutoChestConfigContainer extends ContainerBase
       {
         /* try putting in filter */
         if (!this.mergeItemStack(sourceStack, customFirstSlotIndex,
-              customFirstSlotIndex + AutoChestTileEntity.AUTOCHEST_FILTER_SIZE, false))
+              customFirstSlotIndex + TileEntityAutoChest.AUTOCHEST_FILTER_SIZE, false))
         {
           return ItemStack.EMPTY;
         }

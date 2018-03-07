@@ -2,7 +2,22 @@
 itemGroup.automatedstorage=Automated Storage
 
 # Entities
-tile.automatedstorage.autochest.name=Cofre Automático
+tile.automatedstorage.autochest_white.name=Cofre Automático Blanco
+tile.automatedstorage.autochest_orange.name=Cofre Automático Naranja
+tile.automatedstorage.autochest_magenta.name=Cofre Automático Magenta
+tile.automatedstorage.autochest_lightblue.name=Cofre Automático Azul Claro
+tile.automatedstorage.autochest_yellow.name=Cofre Automático Amarillo
+tile.automatedstorage.autochest_lime.name=Cofre Automático Lima
+tile.automatedstorage.autochest_pink.name=Cofre Automático Rosa
+tile.automatedstorage.autochest_gray.name=Cofre Automático Gris
+tile.automatedstorage.autochest_silver.name=Cofre Automático Plata
+tile.automatedstorage.autochest_cyan.name=Cofre Automático Cian
+tile.automatedstorage.autochest_purple.name=Cofre Automático Púrpura
+tile.automatedstorage.autochest_blue.name=Cofre Automático Azul
+tile.automatedstorage.autochest_brown.name=Cofre Automático Marrón
+tile.automatedstorage.autochest_green.name=Cofre Automático Verde
+tile.automatedstorage.autochest_red.name=Cofre Automático Rojo
+tile.automatedstorage.autochest_black.name=Cofre Automático Negro
 tile.automatedstorage.autochest_source.name=Cofre Automático (Fuente)
 tile.automatedstorage.autochest_sink.name=Cofre Automático (Sumidero)
 

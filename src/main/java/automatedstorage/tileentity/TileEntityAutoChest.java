@@ -1,4 +1,20 @@
-package automatedstorage.block.chest;
+/* Automated Chests Minecraft Mod
+ * Copyright (C) 2018 Diego Darriba
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+package automatedstorage.tileentity;
 
 import java.util.List;
 
@@ -6,7 +22,7 @@ import automatedstorage.block.ModBlocks;
 import automatedstorage.item.ItemStackHandlerCustom;
 import automatedstorage.item.ItemStackHandlerFilter;
 import automatedstorage.item.StackUtil;
-import automatedstorage.tileentity.TileEntityInventory;
+import automatedstorage.network.AutoChestRegistry;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,7 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
-public class AutoChestTileEntity extends TileEntityInventory implements ITickable
+public class TileEntityAutoChest extends TileEntityInventory implements ITickable
 {
   private int networkId;
   private int transferCooldown = -1;
@@ -31,7 +47,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
   public static final int AUTOCHEST_FILTER_COLS = 9;
   public static final int AUTOCHEST_FILTER_SIZE = AUTOCHEST_FILTER_ROWS * AUTOCHEST_FILTER_COLS;
   
-  public AutoChestTileEntity()
+  public TileEntityAutoChest()
   {
     super("tile.autochest.name", AUTOCHEST_SIZE, 0);
     filter = new ItemStackHandlerFilter(AUTOCHEST_FILTER_SIZE);
@@ -42,6 +58,13 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
     return networkId;
   }
 
+  @Override
+  public void onLoad()
+  {
+    this.setNetworkId(0);
+    super.onLoad();
+  }
+  
   public void setNetworkId(int networkId)
   {
     this.networkId = networkId;
@@ -62,15 +85,15 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
       @Override
       public boolean canInsert(ItemStack stack, int slot)
       {
-        return AutoChestTileEntity.this.isItemValidForSlot(slot, stack);
+        return TileEntityAutoChest.this.isItemValidForSlot(slot, stack);
       }
 
       @Override
       protected void onContentsChanged(int slot)
       {
         super.onContentsChanged(slot);
-        AutoChestTileEntity.this.isEmpty = false;
-        AutoChestTileEntity.this.markDirty();
+        TileEntityAutoChest.this.isEmpty = false;
+        TileEntityAutoChest.this.markDirty();
       }
     };
   }
@@ -140,7 +163,7 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
     {
       if (!otherPos.equals(getPos()))
       {
-        AutoChestTileEntity entity = (AutoChestTileEntity) world.getTileEntity(otherPos);
+        TileEntityAutoChest entity = (TileEntityAutoChest) world.getTileEntity(otherPos);
 
         if (entity == null)
           autoChestRegistry.removeAutoChest(networkId, otherPos);
@@ -333,9 +356,9 @@ public class AutoChestTileEntity extends TileEntityInventory implements ITickabl
 
       if (flag)
       {
-        if (inventoryIn instanceof AutoChestTileEntity)
+        if (inventoryIn instanceof TileEntityAutoChest)
         {
-          AutoChestTileEntity tileentitychest = (AutoChestTileEntity) inventoryIn;
+          TileEntityAutoChest tileentitychest = (TileEntityAutoChest) inventoryIn;
 
           if (tileentitychest.mayTransfer())
           {

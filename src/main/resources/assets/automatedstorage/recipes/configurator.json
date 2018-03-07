@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "automatedstorage:configurator",
+    "count": 1
+  },
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "  R",
+    " X ",
+    "X  "
+  ],
+  "key": {
+    "X": { "item": "minecraft:iron_ingot" },
+    "R": { "item": "minecraft:redstone" }
+  }
+}
+

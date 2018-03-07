@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "automatedstorage:autochest",
+    "data": 5,
+    "count": 1
+  },
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "XRX",
+    "RDR",
+    "XRX"
+  ],
+  "key": {
+    "X": { "item": "minecraft:iron_ingot" },
+    "R": { "item": "minecraft:redstone" },
+    "D": { 
+           "item": "minecraft:dye",
+           "data": 10
+         }
+  }
+}

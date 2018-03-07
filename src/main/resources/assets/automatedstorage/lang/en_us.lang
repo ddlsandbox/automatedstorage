@@ -2,7 +2,22 @@
 itemGroup.automatedstorage=Automated Storage
 
 # Entities
-tile.automatedstorage.autochest.name=Automated Chest
+tile.automatedstorage.autochest_white.name=White Automated Chest
+tile.automatedstorage.autochest_orange.name=Orange Automated Chest
+tile.automatedstorage.autochest_magenta.name=Magenta Automated Chest
+tile.automatedstorage.autochest_lightblue.name=Light Blue Automated Chest
+tile.automatedstorage.autochest_yellow.name=Yellow Automated Chest
+tile.automatedstorage.autochest_lime.name=Lime Automated Chest
+tile.automatedstorage.autochest_pink.name=Pink Automated Chest
+tile.automatedstorage.autochest_gray.name=Gray Automated Chest
+tile.automatedstorage.autochest_silver.name=Silver Automated Chest
+tile.automatedstorage.autochest_cyan.name=Cyan Automated Chest
+tile.automatedstorage.autochest_purple.name=Purple Automated Chest
+tile.automatedstorage.autochest_blue.name=Blue Automated Chest
+tile.automatedstorage.autochest_brown.name=Brown Automated Chest
+tile.automatedstorage.autochest_green.name=Green Automated Chest
+tile.automatedstorage.autochest_red.name=Red Automated Chest
+tile.automatedstorage.autochest_black.name=Black Automated Chest
 tile.automatedstorage.autochest_source.name=Automated Chest Source
 tile.automatedstorage.autochest_sink.name=Automated Chest Sink
 

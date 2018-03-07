@@ -1,10 +1,26 @@
+/* Automated Chests Minecraft Mod
+ * Copyright (C) 2018 Diego Darriba
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package automatedstorage.gui;
 
 import java.awt.Color;
 
 import automatedstorage.AutomatedStorage;
-import automatedstorage.block.chest.AutoChestContainer;
-import automatedstorage.block.chest.AutoChestTileEntity;
+import automatedstorage.container.ContainerAutoChest;
+import automatedstorage.tileentity.TileEntityAutoChest;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
@@ -21,7 +37,7 @@ public class AutoChestGui extends GuiContainer
   private static final ResourceLocation gui_inv = new ResourceLocation(AutomatedStorage.modId,
       "textures/gui/inventory.png");
 
-  public AutoChestGui(AutoChestTileEntity tileEntity, AutoChestContainer container)
+  public AutoChestGui(TileEntityAutoChest tileEntity, ContainerAutoChest container)
   {
     super(container);
 

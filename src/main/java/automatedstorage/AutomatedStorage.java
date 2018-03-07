@@ -1,9 +1,26 @@
+/* Automated Chests Minecraft Mod
+ * Copyright (C) 2018 Diego Darriba
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package automatedstorage;
 
 import automatedstorage.block.ModBlocks;
+import automatedstorage.command.ViewNetworksCommand;
+import automatedstorage.command.ViewRegistryCommand;
 import automatedstorage.gui.ModGuiHandler;
 import automatedstorage.item.ModItems;
-import automatedstorage.network.PacketHandler;
 import automatedstorage.proxy.CommonProxy;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -11,6 +28,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -48,9 +66,6 @@ public class AutomatedStorage {
 	  @Mod.EventHandler
 	  public void init(FMLInitializationEvent event)
 	  {
-	    PacketHandler.init(event);
-	    //AutomatedStorageRecipes.init();
-	    
 	    proxy.init(event);
 	  }
 
@@ -66,4 +81,10 @@ public class AutomatedStorage {
 	  public static void registerModels(ModelRegistryEvent event) {
 	    proxy.loadModels();
 	  }
+	  
+	  @Mod.EventHandler
+    public void serverLoad(FMLServerStartingEvent event) {
+        event.registerServerCommand(new ViewRegistryCommand());
+        event.registerServerCommand(new ViewNetworksCommand());
+    }
 }

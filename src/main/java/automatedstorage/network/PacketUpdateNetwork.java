@@ -1,9 +1,24 @@
+/* Automated Chests Minecraft Mod
+ * Copyright (C) 2018 Diego Darriba
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package automatedstorage.network;
 
 import automatedstorage.block.ModBlocks;
-import automatedstorage.block.chest.AutoChestConfigContainer;
-import automatedstorage.block.chest.AutoChestRegistry;
-import automatedstorage.block.chest.AutoChestTileEntity;
+import automatedstorage.container.ContainerAutoChestConfig;
+import automatedstorage.tileentity.TileEntityAutoChest;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +46,7 @@ public class PacketUpdateNetwork implements IMessage
     this.updateRegistry = updateRegistry;
   }
 
-  public PacketUpdateNetwork(AutoChestTileEntity te)
+  public PacketUpdateNetwork(TileEntityAutoChest te)
   {
     this(te.getPos(), te.getNetworkId(), te.getBlockType() == ModBlocks.autoChestSink?1:0, te.getBlockType() == ModBlocks.autoChest);
   }
@@ -66,7 +81,7 @@ public class PacketUpdateNetwork implements IMessage
       AutoChestRegistry autoChestRegistry = AutoChestRegistry
           .get(ctx.getServerHandler().player.world);
       
-      if (serverPlayer.openContainer instanceof AutoChestConfigContainer)
+      if (serverPlayer.openContainer instanceof ContainerAutoChestConfig)
       {
         try
         {
@@ -75,7 +90,7 @@ public class PacketUpdateNetwork implements IMessage
             autoChestRegistry.addAutoChest(message.newNetwork, message.pos, message.type);
           }
           
-          ((AutoChestConfigContainer) serverPlayer.openContainer).updateNetwork(message.newNetwork);
+          ((ContainerAutoChestConfig) serverPlayer.openContainer).updateNetwork(message.newNetwork);
           serverPlayer.openContainer.detectAndSendChanges();
         } catch (Exception e)
         {

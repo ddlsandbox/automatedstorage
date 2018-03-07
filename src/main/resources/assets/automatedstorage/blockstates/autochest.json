@@ -2,10 +2,26 @@
   "forge_marker": 1,
   "defaults": {
     "model": "cube_all",
-    "textures": { "all":"automatedstorage:blocks/autochest_side"}
+    "transform": "forge:default-block"
   },
   "variants": {
+    "color=white": { "model":"automatedstorage:white_autochest" },
+    "color=orange": { "model":"automatedstorage:orange_autochest" },
+    "color=magenta": [{ "model":"automatedstorage:magenta_autochest" }],
+    "color=lightblue": { "model":"automatedstorage:lightblue_autochest" },
+    "color=yellow": { "model":"automatedstorage:yellow_autochest" },
+    "color=lime": { "model":"automatedstorage:lime_autochest" },
+    "color=pink": { "model":"automatedstorage:pink_autochest" },
+    "color=gray": { "model":"automatedstorage:gray_autochest" },
+    "color=silver": { "model":"automatedstorage:silver_autochest" },
+    "color=cyan": { "model":"automatedstorage:cyan_autochest" },
+    "color=purple": { "model":"automatedstorage:purple_autochest" },
+    "color=blue": { "model":"automatedstorage:blue_autochest" },
+    "color=brown": { "model":"automatedstorage:brown_autochest" },
+    "color=green": { "model":"automatedstorage:green_autochest" },
+    "color=red": { "model":"automatedstorage:red_autochest" },
+    "color=black": { "model":"automatedstorage:black_autochest" },
     "normal": [{}],
     "inventory": [{}]
-  }
+    }
 }

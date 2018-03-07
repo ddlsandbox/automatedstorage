@@ -1,54 +1,58 @@
+/* Automated Chests Minecraft Mod
+ * Copyright (C) 2018 Diego Darriba
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package automatedstorage.block.chest;
 
 import automatedstorage.AutomatedStorage;
 import automatedstorage.block.BlockTileEntity;
-import automatedstorage.block.ModBlocks;
 import automatedstorage.gui.ModGuiHandler;
 import automatedstorage.item.ModItems;
+import automatedstorage.network.AutoChestRegistry;
+import automatedstorage.tileentity.TileEntityAutoChest;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class AutoChest extends BlockTileEntity<AutoChestTileEntity>
+public class AutoChest extends BlockTileEntity<TileEntityAutoChest>
 {
-
-  public static final int GUI_ID = 1;
-
+  
   public AutoChest(String name)
   {
-    super(Material.ROCK, name);
+    super(Material.IRON, name);
   }
-
-  @SideOnly(Side.CLIENT)
-  public void initModel()
-  {
-    ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0,
-        new ModelResourceLocation(getRegistryName(), "inventory"));
-  }
-
+  
   @Override
   public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
       EnumFacing side, float hitX, float hitY, float hitZ)
   {
     if (player.getHeldItem(hand).getItem() == ModItems.configurator)
       return false;
-    
+
     if (worldIn.isRemote)
       return true;
-    
+
     if (player.isSneaking())
     {
       player.openGui(AutomatedStorage.instance, ModGuiHandler.AUTOCHEST_CONFIG, worldIn, pos.getX(), pos.getY(),
@@ -60,51 +64,38 @@ public class AutoChest extends BlockTileEntity<AutoChestTileEntity>
     return true;
   }
 
-  private void initNetwork(World world, BlockPos pos)
-  {
-    AutoChestRegistry autoChestRegistry = AutoChestRegistry.get(world);
-    autoChestRegistry.addAutoChest(0, pos, (this == ModBlocks.autoChestSink)?1:0);
-  }
-  
   private void cleanNetwork(World world, BlockPos pos)
   {
     AutoChestRegistry autoChestRegistry = AutoChestRegistry.get(world);
     autoChestRegistry.removeAutoChest(pos);
   }
-  
+
   @Override
-  public void onBlockPlacedBy(World world, BlockPos pos,
-      IBlockState blockState, EntityLivingBase entity, ItemStack stack)
+  public void onBlockPlacedBy(World world, BlockPos pos, IBlockState blockState, EntityLivingBase entity,
+      ItemStack stack)
   {
-    initNetwork(world, pos);
     super.onBlockPlacedBy(world, pos, blockState, entity, stack);
   }
-  
+
   @Override
-  public void onBlockDestroyedByPlayer(World world, BlockPos pos,
-      IBlockState blockState)
+  public void breakBlock(World world, BlockPos pos, IBlockState state) 
   {
+    TileEntity tileEntity = world.getTileEntity(pos);
+    if (tileEntity instanceof IInventory) {
+      InventoryHelper.dropInventoryItems(world, pos, (IInventory)tileEntity);
+    }
     cleanNetwork(world, pos);
-    super.onBlockDestroyedByPlayer(world, pos, blockState);
   }
-  
+
   @Override
-  public void onBlockDestroyedByExplosion(World world,
-      BlockPos pos, Explosion explosion)
+  public Class<TileEntityAutoChest> getTileEntityClass()
   {
-    cleanNetwork(world, pos);
-    super.onBlockDestroyedByExplosion(world, pos, explosion);
-  }
-  
-  @Override
-  public Class<AutoChestTileEntity> getTileEntityClass()
-  {
-    return AutoChestTileEntity.class;
+    return TileEntityAutoChest.class;
   }
 
   @Override
   public TileEntity createNewTileEntity(World world, int arg1)
   {
-    return new AutoChestTileEntity();
+    return new TileEntityAutoChest();
   }
 }

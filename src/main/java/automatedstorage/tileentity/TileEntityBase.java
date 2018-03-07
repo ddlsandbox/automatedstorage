@@ -1,8 +1,21 @@
+/* Automated Chests Minecraft Mod
+ * Copyright (C) 2018 Diego Darriba
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package automatedstorage.tileentity;
 
-import automatedstorage.AutomatedStorage;
-import automatedstorage.network.PacketHandler;
-import automatedstorage.network.PacketServerToClient;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -17,7 +30,6 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -81,7 +93,6 @@ public abstract class TileEntityBase extends TileEntity implements ITickable
   public final void handleUpdateTag(NBTTagCompound compound)
   {
     this.readFromNBT(compound);
-    //this.readSyncableNBT(compound, NBTType.SYNC);
   }
 
   public final void sendUpdate()
@@ -90,15 +101,6 @@ public abstract class TileEntityBase extends TileEntity implements ITickable
     {
       NBTTagCompound compound = new NBTTagCompound();
       this.writeSyncableNBT(compound, NBTType.SYNC);
-
-      NBTTagCompound data = new NBTTagCompound();
-      data.setTag("Data", compound);
-      data.setInteger("X", this.pos.getX());
-      data.setInteger("Y", this.pos.getY());
-      data.setInteger("Z", this.pos.getZ());
-      AutomatedStorage.network.sendToAllAround(new PacketServerToClient(data, PacketHandler.TILE_ENTITY_HANDLER),
-          new NetworkRegistry.TargetPoint(this.world.provider.getDimension(), this.getPos().getX(),
-              this.getPos().getY(), this.getPos().getZ(), 64));
     }
   }
 
@@ -143,36 +145,6 @@ public abstract class TileEntityBase extends TileEntity implements ITickable
   public void updateEntity()
   {
     this.ticksElapsed++;
-
-    // FIXME AVOID CONSTANT UPDATE
-    if (this.shouldSaveDataOnChangeOrWorldStart())
-      this.saveDataOnChangeOrWorldStart();
-    // if (!this.hasSavedDataOnChangeOrWorldStart)
-    // {
-    // if (this.shouldSaveDataOnChangeOrWorldStart())
-    // {
-    // this.saveDataOnChangeOrWorldStart();
-    // }
-    //
-    // this.hasSavedDataOnChangeOrWorldStart = true;
-    // }
-  }
-
-  public void saveDataOnChangeOrWorldStart()
-  {
-    for (EnumFacing side : EnumFacing.values())
-    {
-      BlockPos pos = this.pos.offset(side);
-      if (this.world.isBlockLoaded(pos))
-      {
-        this.tilesAround[side.ordinal()] = this.world.getTileEntity(pos);
-      }
-    }
-  }
-
-  public boolean shouldSaveDataOnChangeOrWorldStart()
-  {
-    return false;
   }
 
   @SuppressWarnings("unchecked")

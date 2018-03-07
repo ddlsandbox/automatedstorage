@@ -1,7 +1,23 @@
+/* Automated Chests Minecraft Mod
+ * Copyright (C) 2018 Diego Darriba
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package automatedstorage.gui;
 
-import automatedstorage.block.chest.AutoChestTileEntity;
 import automatedstorage.item.StackUtil;
+import automatedstorage.tileentity.TileEntityAutoChest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.item.ItemStack;
@@ -25,14 +41,14 @@ public class GuiAutoChestHud extends Gui
     this.networkId = networkId;
   }
 
-  public void draw(Minecraft mc, AutoChestTileEntity te)
+  public void draw(Minecraft mc, TileEntityAutoChest te)
   {
     drawCenteredString(mc.fontRenderer, "Network: " + networkId, x, y, Integer.parseInt("FFAA00", 16));
 
     int itemX = 0;
     int itemY = 1;
     
-    for (int fIndex = 0; fIndex < AutoChestTileEntity.AUTOCHEST_FILTER_SIZE; fIndex++)
+    for (int fIndex = 0; fIndex < TileEntityAutoChest.AUTOCHEST_FILTER_SIZE; fIndex++)
     {
       ItemStack stack = te.filter.getStackInSlot(fIndex);
       if (StackUtil.isValid(stack))

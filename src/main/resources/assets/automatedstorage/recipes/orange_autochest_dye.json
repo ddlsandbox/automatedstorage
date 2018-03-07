@@ -1,0 +1,31 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:dye",
+      "data": 14
+    },
+    [
+    { "item": "automatedstorage:autochest", "data": 0 },
+    { "item": "automatedstorage:autochest", "data": 1 },
+    { "item": "automatedstorage:autochest", "data": 2 },
+    { "item": "automatedstorage:autochest", "data": 3 },
+    { "item": "automatedstorage:autochest", "data": 4 },
+    { "item": "automatedstorage:autochest", "data": 5 },
+    { "item": "automatedstorage:autochest", "data": 6 },
+    { "item": "automatedstorage:autochest", "data": 7 },
+    { "item": "automatedstorage:autochest", "data": 8 },
+    { "item": "automatedstorage:autochest", "data": 9 },
+    { "item": "automatedstorage:autochest", "data": 10 },
+    { "item": "automatedstorage:autochest", "data": 11 },
+    { "item": "automatedstorage:autochest", "data": 12 },
+    { "item": "automatedstorage:autochest", "data": 13 },
+    { "item": "automatedstorage:autochest", "data": 14 },
+    { "item": "automatedstorage:autochest", "data": 15 }
+    ]
+  ],
+  "result": {
+    "item": "automatedstorage:autochest",
+    "data": 1
+  }
+}

@@ -1,8 +1,24 @@
+/* Automated Chests Minecraft Mod
+ * Copyright (C) 2018 Diego Darriba
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package automatedstorage.gui;
 
-import automatedstorage.block.chest.AutoChestConfigContainer;
-import automatedstorage.block.chest.AutoChestContainer;
-import automatedstorage.block.chest.AutoChestTileEntity;
+import automatedstorage.container.ContainerAutoChest;
+import automatedstorage.container.ContainerAutoChestConfig;
+import automatedstorage.tileentity.TileEntityAutoChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.math.BlockPos;
@@ -20,9 +36,9 @@ public class ModGuiHandler implements IGuiHandler
     switch (ID)
     {
     case AUTOCHEST:
-      return new AutoChestContainer(player.inventory, (AutoChestTileEntity) world.getTileEntity(new BlockPos(x, y, z)));
+      return new ContainerAutoChest(player.inventory, (TileEntityAutoChest) world.getTileEntity(new BlockPos(x, y, z)));
     case AUTOCHEST_CONFIG:
-      return new AutoChestConfigContainer(player.inventory, (AutoChestTileEntity) world.getTileEntity(new BlockPos(x, y, z)));
+      return new ContainerAutoChestConfig(player.inventory, (TileEntityAutoChest) world.getTileEntity(new BlockPos(x, y, z)));
     default:
       return null;
     }
@@ -34,11 +50,11 @@ public class ModGuiHandler implements IGuiHandler
     switch (ID)
     {
     case AUTOCHEST:
-      return new AutoChestGui((AutoChestTileEntity) world.getTileEntity(new BlockPos(x, y, z)),
-          new AutoChestContainer(player.inventory, (AutoChestTileEntity) world.getTileEntity(new BlockPos(x, y, z))));
+      return new AutoChestGui((TileEntityAutoChest) world.getTileEntity(new BlockPos(x, y, z)),
+          new ContainerAutoChest(player.inventory, (TileEntityAutoChest) world.getTileEntity(new BlockPos(x, y, z))));
     case AUTOCHEST_CONFIG:
-      return new AutoChestConfigGui((AutoChestTileEntity) world.getTileEntity(new BlockPos(x, y, z)),
-          new AutoChestConfigContainer(player.inventory, (AutoChestTileEntity) world.getTileEntity(new BlockPos(x, y, z))),
+      return new AutoChestConfigGui((TileEntityAutoChest) world.getTileEntity(new BlockPos(x, y, z)),
+          new ContainerAutoChestConfig(player.inventory, (TileEntityAutoChest) world.getTileEntity(new BlockPos(x, y, z))),
           player.inventory);
     default:
       return null;

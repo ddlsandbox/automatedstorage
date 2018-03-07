@@ -5,14 +5,14 @@
   },
   "type": "forge:ore_shaped",
   "pattern": [
-    "M M",
-    " M ",
-    "M M"
+    "XDX",
+    "R R",
+    "XRX"
   ],
   "key": {
-    "M": {
-      "item": "minecraft:wheat"
-    }
+    "X": { "item": "minecraft:iron_ingot" },
+    "R": { "item": "minecraft:redstone" },
+    "D": { "item": "minecraft:diamond" }
   }
 }
 

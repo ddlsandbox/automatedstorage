@@ -1,17 +1,30 @@
+/* Automated Chests Minecraft Mod
+ * Copyright (C) 2018 Diego Darriba
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package automatedstorage.proxy;
-
 
 import automatedstorage.AutomatedStorage;
 import automatedstorage.block.ModBlocks;
 import automatedstorage.block.chest.AutoChest;
-import automatedstorage.block.chest.AutoChestTileEntity;
+import automatedstorage.block.chest.ColoredAutoChest;
 import automatedstorage.item.ModItems;
-import automatedstorage.network.PacketRequestUpdateNetwork;
-import automatedstorage.network.PacketServerToClient;
 import automatedstorage.network.PacketUpdateNetwork;
+import automatedstorage.tileentity.TileEntityAutoChest;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
@@ -30,12 +43,7 @@ public class CommonProxy
   public void preInit(FMLPreInitializationEvent event)
   {
     int messageId = 0;
-    AutomatedStorage.network.registerMessage(new PacketServerToClient.Handler(), PacketServerToClient.class, 
-        messageId++, Side.CLIENT);
-    
     AutomatedStorage.network.registerMessage(new PacketUpdateNetwork.Handler(), PacketUpdateNetwork.class, 
-        messageId++, Side.SERVER);
-    AutomatedStorage.network.registerMessage(new PacketRequestUpdateNetwork.Handler(), PacketRequestUpdateNetwork.class, 
         messageId++, Side.SERVER);
   }
 
@@ -55,18 +63,18 @@ public class CommonProxy
   @SubscribeEvent
   public static void registerBlocks(RegistryEvent.Register<Block> event)
   {
-    event.getRegistry().register(new AutoChest("autochest").setCreativeTab(AutomatedStorage.creativeTab));
+    event.getRegistry().register(new ColoredAutoChest("autochest").setCreativeTab(AutomatedStorage.creativeTab));
     event.getRegistry().register(new AutoChest("autochest_source").setCreativeTab(AutomatedStorage.creativeTab));
     event.getRegistry().register(new AutoChest("autochest_sink").setCreativeTab(AutomatedStorage.creativeTab));
-    GameRegistry.registerTileEntity(AutoChestTileEntity.class, AutomatedStorage.modId + "_autochest");
+    GameRegistry.registerTileEntity(TileEntityAutoChest.class, AutomatedStorage.modId + "_autochest");
   }
 
   @SubscribeEvent
   public static void registerItems(RegistryEvent.Register<Item> event)
   {
-    event.getRegistry().register(new ItemBlock(ModBlocks.autoChest).setRegistryName(ModBlocks.autoChest.getRegistryName()));
-    event.getRegistry().register(new ItemBlock(ModBlocks.autoChestSource).setRegistryName(ModBlocks.autoChestSource.getRegistryName()));
-    event.getRegistry().register(new ItemBlock(ModBlocks.autoChestSink).setRegistryName(ModBlocks.autoChestSink.getRegistryName()));
+    event.getRegistry().register(ModBlocks.autoChest.getItemBlock().setRegistryName(ModBlocks.autoChest.getRegistryName()));
+    event.getRegistry().register(ModBlocks.autoChestSource.getItemBlock().setRegistryName(ModBlocks.autoChestSource.getRegistryName()));
+    event.getRegistry().register(ModBlocks.autoChestSink.getItemBlock().setRegistryName(ModBlocks.autoChestSink.getRegistryName()));
     
     event.getRegistry().register(ModItems.configurator);
   }
