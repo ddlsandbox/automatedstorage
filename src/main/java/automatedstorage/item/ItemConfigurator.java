@@ -16,9 +16,11 @@
  */
 package automatedstorage.item;
 
+import automatedstorage.network.AutoChestRegistry;
 import automatedstorage.tileentity.TileEntityAutoChest;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -32,7 +34,7 @@ import net.minecraft.world.World;
 public class ItemConfigurator extends ItemBase
 {
 
-  private static enum Mode { MODE_CLONE_NETWORK, MODE_SET_NETWORK };
+  private static enum Mode { MODE_CLONE_NETWORK, MODE_SET_NETWORK, MODE_ADD_INVENTORY };
   
   public ItemConfigurator(String name)
   {
@@ -66,8 +68,10 @@ public class ItemConfigurator extends ItemBase
       float par10)
   {
     ItemStack stack = player.getHeldItem(hand);
+    TileEntity tile = world.getTileEntity(pos);
     
-    if (player.isSneaking())
+    if (player.isSneaking() && 
+      !(getMode(stack) == Mode.MODE_ADD_INVENTORY && tile instanceof IInventory))
     {
       /* switch mode */
       switch (getMode(stack))
@@ -76,6 +80,9 @@ public class ItemConfigurator extends ItemBase
         setMode(stack, Mode.MODE_SET_NETWORK);
         break;
       case MODE_SET_NETWORK:
+        setMode(stack, Mode.MODE_ADD_INVENTORY);
+        break;
+      case MODE_ADD_INVENTORY:
         setMode(stack, Mode.MODE_CLONE_NETWORK);
         break;
       }      
@@ -87,8 +94,6 @@ public class ItemConfigurator extends ItemBase
     }
     else
     {
-      TileEntity tile = world.getTileEntity(pos);
-      
       if (tile instanceof TileEntityAutoChest)
       {
         TileEntityAutoChest autochest = (TileEntityAutoChest) tile;
@@ -109,9 +114,22 @@ public class ItemConfigurator extends ItemBase
             player.sendMessage(new TextComponentString("Network set to " + getStoredNetwork(stack)));
           }
           break;
+        default:
+          break;
         }  
         
         return EnumActionResult.SUCCESS;
+      }
+      else if (tile instanceof IInventory && getMode(stack) == Mode.MODE_ADD_INVENTORY)
+      {
+        int networkId = getStoredNetwork(stack);
+        AutoChestRegistry autoChestRegistry = AutoChestRegistry.get(tile.getWorld());
+        autoChestRegistry.addAutoChest(networkId, tile.getPos(), 1);
+        
+        if (world.isRemote)
+        {
+          player.sendMessage(new TextComponentString("Added entity to network " + networkId));
+        }
       }
     }
     

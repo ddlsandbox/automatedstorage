@@ -22,6 +22,7 @@ import automatedstorage.block.chest.AutoChest;
 import automatedstorage.block.chest.ColoredAutoChest;
 import automatedstorage.item.ModItems;
 import automatedstorage.network.PacketUpdateNetwork;
+import automatedstorage.network.PacketUpdateRegistry;
 import automatedstorage.tileentity.TileEntityAutoChest;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -45,6 +46,8 @@ public class CommonProxy
     int messageId = 0;
     AutomatedStorage.network.registerMessage(new PacketUpdateNetwork.Handler(), PacketUpdateNetwork.class, 
         messageId++, Side.SERVER);
+    AutomatedStorage.network.registerMessage(new PacketUpdateRegistry.Handler(), PacketUpdateRegistry.class, 
+        messageId++, Side.CLIENT);
   }
 
   public void init(FMLInitializationEvent event)

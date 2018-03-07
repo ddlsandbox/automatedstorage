@@ -39,7 +39,7 @@ public class ViewRegistryCommand extends CommandBase
   @Nonnull
   public String getUsage(@Nonnull ICommandSender sender)
   {
-    return "ac_viewregistry [network_id]";
+    return "ac_viewregistry [network_id | \"lookup\"]";
   }
 
   @Override
@@ -61,24 +61,38 @@ public class ViewRegistryCommand extends CommandBase
       /* view full registry */
       for (int network : networks)
       {
-        List<BlockPos> blocks = autoChestRegistry.getAutoChests(network);
+        Set<BlockPos> blocks = autoChestRegistry.getAutoChests(network);
         if (blocks != null && !blocks.isEmpty())
           sender.sendMessage(new TextComponentString("Network " + network + " : " + blocks));
       }
     } else
     {
       String s = args[0];
-      int network;
-      try
+      if (s.equalsIgnoreCase("lookup"))
       {
-        network = Integer.parseInt(s);
-      } catch (NumberFormatException e)
-      {
-        sender.sendMessage(new TextComponentString(TextFormatting.RED + "Error parsing network ID!"));
-        return;
+        String posList = "";
+        Set<BlockPos> lookupKeys = autoChestRegistry.getLookupKeys();
+        for (BlockPos pos : lookupKeys)
+        {
+          if (pos != null)
+            posList += "(" + pos.getX() + "," + pos.getY() + "," + pos.getZ() +")[" + autoChestRegistry.getNetworkFor(pos) + "] ";
+        }
+        sender.sendMessage(new TextComponentString("Lookup: " + posList));
       }
-      sender.sendMessage(
-          new TextComponentString("Network " + network + " : " + autoChestRegistry.getAutoChests(network)));
+      else
+      {
+        int network;
+        try
+        {
+          network = Integer.parseInt(s);
+        } catch (NumberFormatException e)
+        {
+          sender.sendMessage(new TextComponentString(TextFormatting.RED + "Error parsing network ID!"));
+          return;
+        }
+        sender.sendMessage(
+            new TextComponentString("Network " + network + " : " + autoChestRegistry.getAutoChests(network)));
+      }
     }
   }
 

@@ -16,11 +16,12 @@
  */
 package automatedstorage.network;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 
@@ -39,39 +40,41 @@ public class AutoChestRegistry extends WorldSavedData
   private static final String DATA_NAME = AutomatedStorage.modId + "_GlobalAutoChests";
   private static final String TAG_LIST_NAME = "GlobalAutoChests";
 
-  private final Map<Integer, List<BlockPos>> autoChestRegistry = Maps.newHashMap();
+  private final Map<Integer, Set<BlockPos>> autoChestRegistry = Maps.newHashMap();
   private final Map<BlockPos, Integer> reverseLookup = Maps.newHashMap();
 
   public AutoChestRegistry()
   {
     super(DATA_NAME);
   }
-  
-  @Override
-  public String toString()
-  {
-    // TODO Auto-generated method stub
-    return super.toString();
-  }
+
   public AutoChestRegistry(String name)
   {
     super(name);
   }
 
+  @Nullable
+  public Integer getNetworkFor(BlockPos pos)
+  {
+    return reverseLookup.get(pos);
+  }
+  
   public void addAutoChest(int networkId, BlockPos pos, int type)
   {
     if (reverseLookup.containsKey(pos))
     {
       /* remove old connection */
-      autoChestRegistry.get(reverseLookup.get(pos)).remove(pos);
+      autoChestRegistry.get(getNetworkFor(pos)).remove(pos);
     }
 
     if (!autoChestRegistry.containsKey(networkId))
     {
-      autoChestRegistry.put(networkId, new ArrayList<BlockPos>());
+      autoChestRegistry.put(networkId, new LinkedHashSet<BlockPos>());
     }
+    
+    //TODO Insert at beginning if type = 0, at the end otherwise
     if (type == 0)
-      autoChestRegistry.get(networkId).add(0, pos);
+      autoChestRegistry.get(networkId).add(pos);
     else
       autoChestRegistry.get(networkId).add(pos);
     
@@ -81,38 +84,36 @@ public class AutoChestRegistry extends WorldSavedData
     markDirty();
   }
   
-  public void removeAutoChest(int networkId, BlockPos pos)
-  {
-    autoChestRegistry.get(networkId).remove(pos);
-    reverseLookup.remove(pos);
-    markDirty();
-  }
-  
   public void removeAutoChest(BlockPos pos)
   {
     if (reverseLookup.containsKey(pos))
     {
-      /* remove old connection */
-      autoChestRegistry.get(reverseLookup.get(pos)).remove(pos);
+      autoChestRegistry.get(getNetworkFor(pos)).remove(pos);
+      reverseLookup.remove(pos);
     }
     markDirty();
   }
 
-  public Collection<List<BlockPos>> getAutoChests()
+  public Collection<Set<BlockPos>> getAutoChests()
   {
     return autoChestRegistry.values();
   }
 
-  public List<BlockPos> getAutoChests(int networkId)
+  public Set<BlockPos> getAutoChests(int networkId)
   {
     if (!autoChestRegistry.containsKey(networkId))
-      autoChestRegistry.put(networkId, new ArrayList<BlockPos>());
+      autoChestRegistry.put(networkId, new LinkedHashSet<BlockPos>());
     return autoChestRegistry.get(networkId);
   }
 
   public Set<Integer> getNetworks()
   {
     return autoChestRegistry.keySet();
+  }
+  
+  public Set<BlockPos> getLookupKeys()
+  {
+    return reverseLookup.keySet();
   }
   
   @Override
@@ -129,7 +130,7 @@ public class AutoChestRegistry extends WorldSavedData
       if (key != currentKey)
       {
         currentKey = key;
-        autoChestRegistry.put(key, new ArrayList<BlockPos>());
+        autoChestRegistry.put(key, new LinkedHashSet<BlockPos>());
       }
       BlockPos pos = BlockPos.fromLong(entryCompound.getLong("Position"));
       
@@ -147,7 +148,7 @@ public class AutoChestRegistry extends WorldSavedData
     NBTTagList tagList = new NBTTagList();
     for (Integer key : autoChestRegistry.keySet())
     {
-      List<BlockPos> entries = autoChestRegistry.get(key);
+      Set<BlockPos> entries = autoChestRegistry.get(key);
       for (BlockPos pos : entries)
       {
         NBTTagCompound entryCompound = new NBTTagCompound();

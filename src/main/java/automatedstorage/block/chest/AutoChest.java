@@ -75,6 +75,10 @@ public class AutoChest extends BlockTileEntity<TileEntityAutoChest>
       ItemStack stack)
   {
     super.onBlockPlacedBy(world, pos, blockState, entity, stack);
+    TileEntity tileEntity = world.getTileEntity(pos);
+    if (tileEntity instanceof TileEntityAutoChest) {
+      ((TileEntityAutoChest)tileEntity).setNetworkId(0);
+    }
   }
 
   @Override

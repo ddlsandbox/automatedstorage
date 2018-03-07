@@ -41,9 +41,14 @@ public class GuiAutoChestHud extends Gui
     this.networkId = networkId;
   }
 
-  public void draw(Minecraft mc, TileEntityAutoChest te)
+  public void draw(Minecraft mc)
   {
     drawCenteredString(mc.fontRenderer, "Network: " + networkId, x, y, Integer.parseInt("FFAA00", 16));
+  }
+  
+  public void draw(Minecraft mc, TileEntityAutoChest te)
+  {
+    draw(mc);
 
     int itemX = 0;
     int itemY = 1;

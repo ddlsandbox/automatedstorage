@@ -16,13 +16,16 @@
  */
 package automatedstorage.tileentity;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+import automatedstorage.AutomatedStorage;
 import automatedstorage.block.ModBlocks;
 import automatedstorage.item.ItemStackHandlerCustom;
 import automatedstorage.item.ItemStackHandlerFilter;
 import automatedstorage.item.StackUtil;
 import automatedstorage.network.AutoChestRegistry;
+import automatedstorage.network.PacketUpdateRegistry;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,6 +33,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class TileEntityAutoChest extends TileEntityInventory implements ITickable
 {
@@ -58,13 +62,6 @@ public class TileEntityAutoChest extends TileEntityInventory implements ITickabl
     return networkId;
   }
 
-  @Override
-  public void onLoad()
-  {
-    this.setNetworkId(0);
-    super.onLoad();
-  }
-  
   public void setNetworkId(int networkId)
   {
     this.networkId = networkId;
@@ -157,21 +154,47 @@ public class TileEntityAutoChest extends TileEntityInventory implements ITickabl
    */
   private IInventory getInventoryForTransfer(ItemStack stack)
   {
+    IInventory returnEntity = null;
+    boolean doClean = false;
+    Set<BlockPos> cleanList = null;
     AutoChestRegistry autoChestRegistry = AutoChestRegistry.get(this.getWorld());
-    List<BlockPos> others = autoChestRegistry.getAutoChests(this.networkId);
+    Set<BlockPos> others = autoChestRegistry.getAutoChests(this.networkId);
     for (BlockPos otherPos : others)
     {
       if (!otherPos.equals(getPos()))
       {
-        TileEntityAutoChest entity = (TileEntityAutoChest) world.getTileEntity(otherPos);
+        IInventory entity = (IInventory) world.getTileEntity(otherPos);
 
         if (entity == null)
-          autoChestRegistry.removeAutoChest(networkId, otherPos);
-        else if (entity.isItemValidForSlot(0, stack))
-          return entity;
+        {
+          doClean = true;
+          if (cleanList == null)
+            cleanList = new LinkedHashSet<BlockPos>();
+          cleanList.add(otherPos);
+        }
+        else if(entity.isItemValidForSlot(0, stack))
+        {
+          returnEntity = entity;
+          break;
+        }
       }
     }
-    return null;
+    
+    if (doClean)
+    {
+      for (BlockPos cleanPos : cleanList)
+      {
+        autoChestRegistry.removeAutoChest(cleanPos);
+        if (!world.isRemote) {
+          AutomatedStorage.network.sendToAllAround(
+            new PacketUpdateRegistry(cleanPos, 0, -1), 
+            new NetworkRegistry.TargetPoint(world.provider.getDimension(), 
+              pos.getX(), pos.getY(), pos.getZ(), 64));
+        }
+      }
+    }
+    
+    return returnEntity;
   }
 
   private boolean isItemInFilter(ItemStack stack)

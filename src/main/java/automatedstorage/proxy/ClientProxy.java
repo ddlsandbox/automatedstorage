@@ -20,12 +20,14 @@ import automatedstorage.AutomatedStorage;
 import automatedstorage.block.ModBlocks;
 import automatedstorage.gui.GuiAutoChestHud;
 import automatedstorage.item.ModItems;
+import automatedstorage.network.AutoChestRegistry;
 import automatedstorage.tileentity.TileEntityAutoChest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
@@ -127,6 +129,24 @@ public class ClientProxy extends CommonProxy
             guiAutoChestHud.draw(minecraft, chest);
   
             GlStateManager.popMatrix();
+          }
+          else if (tileHit instanceof IInventory)
+          {
+            /* check if it exists in some network */
+            Integer network = AutoChestRegistry.get(minecraft.world).getNetworkFor(posHit.getBlockPos());
+            if (network != null)
+            {
+              GlStateManager.pushMatrix();
+              GlStateManager.color(1F, 1F, 1F, 1F);
+    
+              guiAutoChestHud.setData(
+                  event.getResolution().getScaledWidth()/2,
+                  event.getResolution().getScaledHeight()/2,
+                  network);
+              guiAutoChestHud.draw(minecraft);
+    
+              GlStateManager.popMatrix();
+            }
           }
         }
       }

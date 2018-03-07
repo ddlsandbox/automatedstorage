@@ -59,7 +59,7 @@ public class ViewNetworksCommand extends CommandBase
     String netList = "";
     for (int network : networks)
     {
-      List<BlockPos> blocks = autoChestRegistry.getAutoChests(network);
+      Set<BlockPos> blocks = autoChestRegistry.getAutoChests(network);
       if (blocks != null && !blocks.isEmpty())
         netList += network + "(" + blocks.size() +") ";
     }
