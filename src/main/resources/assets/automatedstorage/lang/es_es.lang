@@ -2,6 +2,7 @@
 itemGroup.automatedstorage=Automated Storage
 
 # Entities
+tile.automatedstorage.autochest.name=Cofre Automático
 tile.automatedstorage.autochest_white.name=Cofre Automático Blanco
 tile.automatedstorage.autochest_orange.name=Cofre Automático Naranja
 tile.automatedstorage.autochest_magenta.name=Cofre Automático Magenta

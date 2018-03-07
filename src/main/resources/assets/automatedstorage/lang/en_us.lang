@@ -2,6 +2,7 @@
 itemGroup.automatedstorage=Automated Storage
 
 # Entities
+tile.automatedstorage.autochest.name=Automated Chest
 tile.automatedstorage.autochest_white.name=White Automated Chest
 tile.automatedstorage.autochest_orange.name=Orange Automated Chest
 tile.automatedstorage.autochest_magenta.name=Magenta Automated Chest
